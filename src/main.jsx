@@ -2,20 +2,53 @@ import React, { useState, useEffect, useMemo } from 'react';
 import ReactDOM from 'react-dom/client';
 import { PrivyProvider, usePrivy, useLoginWithEmail } from '@privy-io/react-auth';
 
-const PRIVY_APP_ID = "cmqollwmd000s0cky0evrjnkd";
+const PRIVY_APP_ID = "cmqollwmd000s0cky0evrjnkd"; 
 
-// --- ICÔNES SVG MINIMALISTES STYLE APPLE ---
 const Icons = {
-  Overview: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>,
-  Markets: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="24" x2="16.65" y2="19.35"/></svg>,
-  Vault: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7s0 6 8 10z"/></svg>,
-  Settings: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>,
-  ArrowReceive: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="19" y1="5" x2="5" y2="19"/><polyline points="5 9 5 19 19 19"/></svg>,
-  ArrowSend: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="19 15 19 5 9 5"/></svg>,
-  Chevron: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="9 18 15 12 9 6"/></svg>
+  Overview: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="7" height="9" />
+      <rect x="14" y="3" width="7" height="5" />
+      <rect x="14" y="12" width="7" height="9" />
+      <rect x="3" y="16" width="7" height="5" />
+    </svg>
+  ),
+  Markets: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="8" />
+      <line x1="21" y1="24" x2="16.65" y2="19.35" />
+    </svg>
+  ),
+  Vault: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7s0 6 8 10z" />
+    </svg>
+  ),
+  Settings: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+    </svg>
+  ),
+  ArrowReceive: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <line x1="19" y1="5" x2="5" y2="19" />
+      <polyline points="5 9 5 19 19 19" />
+    </svg>
+  ),
+  ArrowSend: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <line x1="5" y1="19" x2="19" y2="5" />
+      <polyline points="19 15 19 5 9 5" />
+    </svg>
+  ),
+  Chevron: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <polyline points="9 18 15 12 9 6" />
+    </svg>
+  )
 };
 
-// --- HOOK DESKTOP DU WALLET VIEWMODEL (WebSocket + Logique Blockchain Spélia RPC) ---
 function useWalletViewModel() {
   const { authenticated, user } = usePrivy();
   const [currentTheme, setCurrentTheme] = useState(() => localStorage.getItem("app_theme") || "Dark");
@@ -33,54 +66,51 @@ function useWalletViewModel() {
   useEffect(() => { localStorage.setItem("app_theme", currentTheme); }, [currentTheme]);
   useEffect(() => { localStorage.setItem("app_currency", currentCurrency); }, [currentCurrency]);
 
-  // 🌟 CHARGEMENT DYNAMIQUE DU SOLDE ET DE L'HISTORIQUE DE TRANSFERTS (Base Sepolia RPC)[cite: 2]
   useEffect(() => {
     if (!authenticated || !walletAddress) return;
 
     const fetchBlockchainData = async () => {
-      const rpcNodeUrl = "https://sepolia.base.org";[cite: 2]
-      const usdcContract = "0xD733D48f2a7F57D4559F98ae07f87Dab595E3523";[cite: 2]
-      const transferTopic = "0xddf252adb1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";[cite: 2]
+      const rpcNodeUrl = "https://sepolia.base.org";
+      const usdcContract = "0xD733D48f2a7F57D4559F98ae07f87Dab595E3523";
+      const transferTopic = "0xddf252adb1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
       
       const cleanAddress = walletAddress.replace("0x", "").toLowerCase();
       const paddedAddress = cleanAddress.padStart(64, "0");
       
       try {
-        // 1. Appel RPC Solde ERC20[cite: 2]
         const balanceRes = await fetch(rpcNodeUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            jsonrpc: "2.0", method: "eth_call",[cite: 2]
-            params: [{ to: usdcContract, data: "0x70a08231" + paddedAddress }, "latest"], id: 1[cite: 2]
+            jsonrpc: "2.0", method: "eth_call",
+            params: [{ to: usdcContract, data: "0x70a08231" + paddedAddress }, "latest"], id: 1
           })
         });
         const balanceJson = await balanceRes.json();
         if (balanceJson.result && balanceJson.result !== "0x") {
           const rawValue = BigInt("0x" + balanceJson.result.replace("0x", ""));
-          setUsdcBalance(Number(rawValue) / Math.pow(10, 18)); // Base Sepolia Faucet Token (18 décimales)[cite: 2]
+          setUsdcBalance(Number(rawValue) / Math.pow(10, 18));
         }
 
-        // 2. Appel RPC Logs des Transferts de Jetons (Historique réel)[cite: 2]
         const logsRes = await fetch(rpcNodeUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            jsonrpc: "2.0", method: "eth_getLogs",[cite: 2]
-            params: [{ address: usdcContract, fromBlock: "0x0", toBlock: "latest", topics: [transferTopic] }], id: 2[cite: 2]
+            jsonrpc: "2.0", method: "eth_getLogs",
+            params: [{ address: usdcContract, fromBlock: "0x0", toBlock: "latest", topics: [transferTopic] }], id: 2
           })
         });
         const logsJson = await logsRes.json();
         if (logsJson.result) {
           const userTxs = logsJson.result.filter(log => {
-            const from = "0x" + log.topics[1]?.suffix?.(40) || "";
-            const to = "0x" + log.topics[2]?.suffix?.(40) || "";
+            const from = "0x" + (log.topics[1]?.substring(26) || "");
+            const to = "0x" + (log.topics[2]?.substring(26) || "");
             return from.toLowerCase().includes(cleanAddress) || to.toLowerCase().includes(cleanAddress);
           }).map(log => {
             const fromAddr = "0x" + log.topics[1].substring(26);
             const isSend = fromAddr.toLowerCase() === walletAddress.toLowerCase();
             const rawAmount = BigInt("0x" + log.data.replace("0x", ""));
-            const cryptoAmount = Number(rawAmount) / Math.pow(10, 18);[cite: 2]
+            const cryptoAmount = Number(rawAmount) / Math.pow(10, 18);
             return {
               id: log.transactionHash,
               type: isSend ? "Send" : "Receive",
@@ -102,7 +132,6 @@ function useWalletViewModel() {
     return () => clearInterval(interval);
   }, [authenticated, walletAddress]);
 
-  // Récupération Forex Rate[cite: 2]
   useEffect(() => {
     fetch("https://api.frankfurter.dev/v1/latest?base=USD&symbols=EUR")
       .then(res => res.json())
@@ -110,7 +139,6 @@ function useWalletViewModel() {
       .catch(() => {});
   }, []);
 
-  // Flux WebSockets direct[cite: 2]
   useEffect(() => {
     const streams = "btcusdt@ticker/ethusdt@ticker/usdcusdt@ticker/xrpusdt@ticker/solusdt@ticker/trxusdt@ticker/dogeusdt@ticker/bnbusdt@ticker";
     const bWs = new WebSocket(`wss://stream.binance.com:9443/stream?streams=${streams}`);
@@ -167,17 +195,14 @@ function useWalletViewModel() {
   return { currentTheme, setCurrentTheme, currentCurrency, setCurrentCurrency, selectedTab, setSelectedTab, assets, totalBalanceCalculated, transactions };
 }
 
-// --- MAIN COMPONENTS ---
 function KoppiApp() {
-  const { authenticated, logout } = usePrivy();
+  const { authenticated, user, logout } = usePrivy();
   const { sendCode, loginWithCode, state } = useLoginWithEmail();
   const vm = useWalletViewModel();
 
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [step, setStep] = useState('email');
-  
-  // États de navigation pour les détails d'un Asset cliquable
   const [selectedAssetDetail, setSelectedAssetDetail] = useState(null);
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => localStorage.getItem("sidebar_collapsed") === "true");
@@ -187,12 +212,11 @@ function KoppiApp() {
   const currencySymbol = vm.currentCurrency.includes("EUR") ? "€" : "$";
 
   const bg = isDarkMode ? "#000000" : "#F5F5F7";
-  const text = isDarkMode = isDarkMode ? "#F5F5F7" : "#1D1D1F";
+  const text = isDarkMode ? "#F5F5F7" : "#1D1D1F";
   const cardBg = isDarkMode ? "#1C1C1E" : "#FFFFFF";
   const border = isDarkMode ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.06)";
   const secondaryText = isDarkMode ? "#8E8E93" : "#86868B";
 
-  // 🌟 FILTRAGE : Uniquement afficher les balances acquises (> 0)[cite: 1]
   const acquiredAssets = useMemo(() => vm.assets.filter(a => a.realBalance > 0), [vm.assets]);
 
   const handleLogout = async () => { try { await logout(); localStorage.clear(); window.location.reload(); } catch(e){} };
@@ -222,11 +246,10 @@ function KoppiApp() {
   return (
     <div style={{ backgroundColor: bg, color: text, minHeight: '100vh', display: 'flex', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', WebkitFontSmoothing: 'antialiased' }}>
       
-      {/* --- SIDEBAR RETRACTABLE PERSISTANTE --- */}
       <aside style={{ width: sidebarCollapsed ? '72px' : '240px', borderRight: `1px solid ${border}`, display: 'flex', flexDirection: 'column', padding: '32px 14px', backgroundColor: cardBg, transition: 'width 0.25s cubic-bezier(0.25, 1, 0.5, 1)' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: sidebarCollapsed ? 'center' : 'space-between', marginBottom: '40px', padding: '0 8px' }}>
           {!sidebarCollapsed && <div style={{ fontSize: '16px', fontWeight: '600', letterSpacing: '3px' }}>KOPPI</div>}
-          <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)} style={{ background: 'none', border: 'none', color: secondaryText, cursor: 'pointer' }}>{sidebarCollapsed ? "→" : "←"}</button>
+          <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)} style={{ background: 'none', border: 'none', color: secondaryText, cursor: 'pointer', fontSize: '14px' }}>{sidebarCollapsed ? "→" : "←"}</button>
         </div>
         
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>
@@ -246,10 +269,8 @@ function KoppiApp() {
         </nav>
       </aside>
 
-      {/* --- PANNEAU CENTRAL PRINCIPAL --- */}
       <main style={{ flex: 1, padding: '54px 64px', overflowY: 'auto', maxHeight: '100vh' }}>
         
-        {/* VUE CONTEXTUELLE DE DETAIL POUR UN ASSET SÉLECTIONNÉ (CLIQUABLE) */}
         {selectedAssetDetail ? (
           <div style={{ maxWidth: '680px', margin: '0 auto' }}>
             <button onClick={() => setSelectedAssetDetail(null)} style={{ background: 'none', border: 'none', color: secondaryText, fontSize: '13px', cursor: 'pointer', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '6px' }}>← Back to Overview</button>
@@ -266,7 +287,6 @@ function KoppiApp() {
           </div>
         ) : (
           <>
-            {/* TAB 0 : CONTENU DU PORTFOLIO AVEC FINESSE "APPLE" */}
             {vm.selectedTab === 0 && (
               <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
                 <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '40px' }}>
@@ -275,11 +295,9 @@ function KoppiApp() {
                   </div>
                 </header>
 
-                {/* Bloc Solde Typographie Fine Apple Style */}
                 <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '16px', padding: '36px', marginBottom: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
                     <div style={{ fontSize: '11px', color: secondaryText, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '6px' }}>Net Worth</div>
-                    {/* Style de police épuré, fin et moderne sans fioriture grasse */}
                     <div style={{ fontSize: '42px', fontWeight: '300', letterSpacing: '-1.5px', fontFamily: '-apple-system-headline, sans-serif' }}>
                       {vm.totalBalanceCalculated.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{currencySymbol}
                     </div>
@@ -291,7 +309,6 @@ function KoppiApp() {
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: '48px' }}>
-                  {/* Liste Exclusive des Balances Acquises Clinnables */}
                   <div>
                     <h3 style={{ fontSize: '13px', fontWeight: '500', color: secondaryText, marginBottom: '14px' }}>Assets</h3>
                     <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '16px', overflow: 'hidden' }}>
@@ -299,7 +316,7 @@ function KoppiApp() {
                         <div style={{ padding: '24px', textAlign: 'center', color: secondaryText, fontSize: '13px' }}>Your wallet is empty. Deposit stablecoins to activate the node.</div>
                       ) : (
                         acquiredAssets.map((asset, i) => (
-                          <div key={asset.id} onClick={() => setSelectedAssetDetail(asset)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: i < acquiredAssets.length - 1 ? `1px solid ${border}` : 'none', cursor: 'pointer', transition: 'background 0.2s' }} className="asset-row-hover">
+                          <div key={asset.id} onClick={() => setSelectedAssetDetail(asset)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: i < acquiredAssets.length - 1 ? `1px solid ${border}` : 'none', cursor: 'pointer', transition: 'background 0.2s' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                               <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: asset.color }} />
                               <div>
@@ -319,7 +336,6 @@ function KoppiApp() {
                     </div>
                   </div>
 
-                  {/* Vrais logs de Transactions décodés via eth_getLogs */}
                   <div>
                     <h3 style={{ fontSize: '13px', fontWeight: '500', color: secondaryText, marginBottom: '14px' }}>Activity Logs</h3>
                     <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '16px', overflow: 'hidden' }}>
@@ -349,7 +365,6 @@ function KoppiApp() {
               </div>
             )}
 
-            {/* TAB 1 : MARCHES ET COMPOSANTS SANS EMOTICONE */}
             {vm.selectedTab === 1 && (
               <div style={{ maxWidth: '740px', margin: '0 auto' }}>
                 <h2 style={{ fontSize: '20px', fontWeight: '500', marginBottom: '20px', letterSpacing: '-0.3px' }}>Markets</h2>
@@ -364,7 +379,6 @@ function KoppiApp() {
               </div>
             )}
 
-            {/* TAB 2 : LE COFFRE ULTRA-MINIMALISTE */}
             {vm.selectedTab === 2 && (
               <div style={{ textAlign: 'center', padding: '120px 0', maxWidth: '400px', margin: '0 auto' }}>
                 <h2 style={{ fontSize: '18px', fontWeight: '500', marginBottom: '8px' }}>Vault Security Encryption</h2>
@@ -372,7 +386,6 @@ function KoppiApp() {
               </div>
             )}
 
-            {/* TAB 3 : REGLAGES ET DECONNEXION SECURISEE SANS SOUCI */}
             {vm.selectedTab === 3 && (
               <div style={{ maxWidth: '500px', margin: '0 auto' }}>
                 <h2 style={{ fontSize: '20px', fontWeight: '500', marginBottom: '24px' }}>Settings</h2>
