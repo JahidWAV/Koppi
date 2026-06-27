@@ -13,7 +13,7 @@ function KoppiApp() {
   const [step, setStep] = useState('email'); // 'email' ou 'otp'
   const [status, setStatus] = useState('');
 
-  // 🚀 Déclenchement de l'envoi de l'e-mail par Privy via usePrivy
+  // 🚀 Déclenchement de l'envoi de l'e-mail par Privy
   const handleSendCode = async () => {
     if (!email.includes('@')) return;
     setStatus("Sending...");
@@ -26,7 +26,7 @@ function KoppiApp() {
     }
   };
 
-  // 🚀 Validation du code OTP à 6 chiffres via usePrivy
+  // 🚀 Validation du code OTP à 6 chiffres
   const handleVerifyCode = async () => {
     if (code.length !== 6) return;
     setStatus("Verifying...");
@@ -43,7 +43,7 @@ function KoppiApp() {
     btnCta: { height: '42px', padding: '0 24px', background: '#020202', color: '#fff', fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', borderRadius: '21px', border: 'none', cursor: 'pointer' },
     mainWrapper: { maxWidth: '960px', width: '100%', margin: '0 auto', padding: '160px 24px 80px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center' },
     heroSection: { textAlign: 'center', maxWidth: '640px', marginBottom: '80px' },
-    badge: { display: 'inline-block', background: '#fff', border: '1px solid rgba(0,0,0,0.05)', padding: '6px 14px', borderRadius: '20px', fontSize: '10px', fontWeight: '700', letterSpacing: '1.5px', textTransform: 'uppercase', color: '#88', marginBottom: '24px' },
+    badge: { display: 'inline-block', background: '#fff', border: '1px solid rgba(0,0,0,0.05)', padding: '6px 14px', borderRadius: '20px', fontSize: '10px', fontWeight: '700', letterSpacing: '1.5px', textTransform: 'uppercase', color: '#888', marginBottom: '24px' },
     h1: { fontSize: '48px', fontWeight: '800', letterSpacing: '-1.5px', marginBottom: '20px', lineHeight: 1.15 },
     heroDesc: { fontSize: '18px', color: '#666', marginBottom: '32px' },
     appContainer: { maxWidth: '400px', width: '100%', margin: '40px auto', display: 'flex', flexDirection: 'column', gap: '40px', paddingTop: '80px' },
@@ -89,7 +89,8 @@ function KoppiApp() {
           {step === 'email' ? (
             <div>
               <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={styles.inputField} placeholder="Enter your email address" />
-              <button onClick={handleSendCode} style={styles.styles || styles.btnSubmit}>Continue</button>
+              {/* 🌟 FIX ICI : style appliqué correctement sur le bouton submit */}
+              <button onClick={handleSendCode} style={styles.btnSubmit}>Continue</button>
             </div>
           ) : (
             <div>
@@ -121,7 +122,6 @@ function KoppiApp() {
   );
 }
 
-// Rendu racine standard de l'application React
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <PrivyProvider appId={PRIVY_APP_ID} config={{ loginMethods: ['email'], embeddedWallets: { createOnLogin: 'users-without-wallets' } }}>
