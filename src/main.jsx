@@ -5,7 +5,8 @@ import { PrivyProvider, usePrivy } from '@privy-io/react-auth';
 const PRIVY_APP_ID = "cmqollwmd000s0cky0evrjnkd"; 
 
 function KoppiApp() {
-  const { authenticated, user, logout, sendOtp, loginWithCode } = usePrivy();
+  // 🌟 CORRECTION ICI : sendCode au lieu de sendOtp
+  const { authenticated, user, logout, sendCode, loginWithCode } = usePrivy();
   
   const [view, setView] = useState('landing'); // 'landing' ou 'portal'
   const [email, setEmail] = useState('');
@@ -13,7 +14,7 @@ function KoppiApp() {
   const [step, setStep] = useState('email'); // 'email' ou 'otp'
   const [status, setStatus] = useState('');
 
-  // 🚀 Déclenchement de l'envoi de l'e-mail par Privy (Correction des paramètres obligatoires)
+  // Déclenchement de l'envoi de l'e-mail
   const handleSendCode = async () => {
     const cleanEmail = email.trim().toLowerCase();
     if (!cleanEmail.includes('@')) {
@@ -23,8 +24,8 @@ function KoppiApp() {
     
     setStatus("Sending...");
     try {
-      // 🌟 FIX CRUCIAL : Privy exige de spécifier explicitement l'email dans l'objet de configuration
-      await sendOtp({ email: cleanEmail });
+      // 🌟 UTILISATION DE LA MÉTHODE DU SDK CLIENT VISIBLE SUR TON APPLICATION NATIF
+      await sendCode({ email: cleanEmail });
       setStep('otp');
       setStatus("Verification code generated.");
     } catch (err) {
@@ -33,7 +34,7 @@ function KoppiApp() {
     }
   };
 
-  // 🚀 Validation du code OTP à 6 chiffres
+  // Validation du code OTP à 6 chiffres
   const handleVerifyCode = async () => {
     const cleanCode = code.trim();
     if (cleanCode.length !== 6) return;
