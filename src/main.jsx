@@ -4,20 +4,70 @@ import { PrivyProvider, usePrivy, useLoginWithEmail } from '@privy-io/react-auth
 
 const PRIVY_APP_ID = "cmqollwmd000s0cky0evrjnkd";
 
-// --- HOOK DESKTOP DU WALLET VIEWMODEL (WebSocket + Logique iOS) ---
+// --- HOOK DESKTOP DU WALLET VIEWMODEL (WebSocket + Logique Blockchain iOS) ---
 function useWalletViewModel() {
   const { authenticated, user } = usePrivy();
   const [currentTheme, setCurrentTheme] = useState(() => localStorage.getItem("app_theme") || "Dark");
   const [currentCurrency, setCurrentCurrency] = useState(() => localStorage.getItem("app_currency") || "USD ($)");
   const [selectedTab, setSelectedTab] = useState(0);
-  const [usdcBalance, setUsdcBalance] = useState(0.00); // Purge de la valeur fictive, initialisé à 0
+  const [usdcBalance, setUsdcBalance] = useState(0.00); 
   const [liveUsdToEurRate, setLiveUsdToEurRate] = useState(0.92);
 
   const [rawPricesUSD, setRawPricesUSD] = useState({ BTC: 0, ETH: 0, USDT: 1, BNB: 0, USDC: 1, XRP: 0, SOL: 0, TRX: 0, HYPE: 0, DOGE: 0 });
   const [rawVariations24h, setRawVariations24h] = useState({ BTC: 0, ETH: 0, USDT: 0, BNB: 0, USDC: 0, XRP: 0, SOL: 0, TRX: 0, HYPE: 0, DOGE: 0 });
 
+  // Récupération de l'adresse du portefeuille connecté via Privy
+  const walletAddress = user?.wallet?.address;
+
   useEffect(() => { localStorage.setItem("app_theme", currentTheme); }, [currentTheme]);
   useEffect(() => { localStorage.setItem("app_currency", currentCurrency); }, [currentCurrency]);
+
+  // 🌟 FLUX RPC : Lecture réelle du solde ERC20 sur Base Sepolia (Fidèle à WalletViewModel.swift)
+  useEffect(() => {
+    if (!authenticated || !walletAddress) return;
+
+    const fetchBlockchainBalance = async () => {
+      const rpcNodeUrl = "https://sepolia.base.org"; //[cite: 2]
+      const usdcContract = "0xD733D48f2a7F57D4559F98ae07f87Dab595E3523"; //[cite: 2]
+      
+      // Sécurisation et formatage de l'adresse pour le paramètre data (Padded à 64 caractères)[cite: 2]
+      const cleanAddress = walletAddress.replace("0x", "").toLowerCase();
+      const paddedAddress = cleanAddress.padStart(64, "0");
+      const dataParam = "0x70a08231" + paddedAddress; // Signature de fonction balanceOf[cite: 2]
+
+      try {
+        const response = await fetch(rpcNodeUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            jsonrpc: "2.0",
+            method: "eth_call", //[cite: 2]
+            params: [{ to: usdcContract, data: dataParam }, "latest"], //[cite: 2]
+            id: 1
+          })
+        });
+
+        const json = await response.json();
+        if (json.result && json.result !== "0x") {
+          // Conversion de la valeur hexadécimale brute reçue de la blockchain[cite: 2]
+          const hexValue = json.result.replace("0x", "");
+          const rawValue = BigInt("0x" + hexValue);
+
+          // Ajustement des décimales basé sur l'exposant de ton code Swift (18 décimales)[cite: 2]
+          const formattedBalance = Number(rawValue) / Math.pow(10, 18); 
+          
+          setUsdcBalance(formattedBalance);
+        }
+      } catch (error) {
+        console.error("RPC Fetch Error:", error);
+      }
+    };
+
+    // Premier chargement immédiat puis actualisation cyclique toutes les 10 secondes
+    fetchBlockchainBalance();
+    const interval = setInterval(fetchBlockchainBalance, 10000);
+    return () => clearInterval(interval);
+  }, [authenticated, walletAddress]);
 
   // Récupération Forex Rate[cite: 2]
   useEffect(() => {
@@ -64,7 +114,7 @@ function useWalletViewModel() {
       { id: "ethereum", name: "Ethereum", ticker: "ETH", color: "#627EEA", balance: 0.0 },
       { id: "tether", name: "Tether", ticker: "USDT", color: "#26A17B", balance: 0.0 },
       { id: "binancecoin", name: "BNB", ticker: "BNB", color: "#F3BA2F", balance: 0.0 },
-      { id: "usd-coin", name: "USDC", ticker: "USDC", color: "#2775CA", balance: usdcBalance },
+      { id: "usd-coin", name: "USDC", ticker: "USDC", color: "#2775CA", balance: usdcBalance }, // injecte la vraie valeur
       { id: "ripple", name: "XRP", ticker: "XRP", color: "#23292F", balance: 0.0 },
       { id: "solana", name: "Solana", ticker: "SOL", color: "#14F195", balance: 0.0 },
       { id: "tron", name: "TRON", ticker: "TRX", color: "#EC0928", balance: 0.0 },
@@ -83,7 +133,6 @@ function useWalletViewModel() {
     return currentCurrency.includes("USD") ? totalUSD : totalUSD * liveUsdToEurRate;
   }, [assets, currentCurrency, liveUsdToEurRate]);
 
-  // Purge complète des fausses données d'activité de l'historique
   const transactions = []; 
 
   return { currentTheme, setCurrentTheme, currentCurrency, setCurrentCurrency, selectedTab, setSelectedTab, assets, totalBalanceCalculated, transactions };
