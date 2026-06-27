@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
-import { PrivyProvider, usePrivy } from '@privy-io/react-auth';
+// 🌟 La correction est ici : on importe usePasswordlessAuth pour découpler l'UI custom
+import { PrivyProvider, usePrivy, usePasswordlessAuth } from '@privy-io/react-auth';
 
 const PRIVY_APP_ID = "cmqollwmd000s0cky0evrjnkd"; 
 
 function KoppiApp() {
-  // 🌟 CORRECTION ICI : sendCode au lieu de sendOtp
-  const { authenticated, user, logout, sendCode, loginWithCode } = usePrivy();
+  const { authenticated, user, logout } = usePrivy();
+  
+  // 🌟 On récupère les vraies méthodes d'envoi et de vérification Headless ici :
+  const { initLoginWithCode, loginWithCode } = usePasswordlessAuth();
   
   const [view, setView] = useState('landing'); // 'landing' ou 'portal'
   const [email, setEmail] = useState('');
@@ -24,8 +27,8 @@ function KoppiApp() {
     
     setStatus("Sending...");
     try {
-      // 🌟 UTILISATION DE LA MÉTHODE DU SDK CLIENT VISIBLE SUR TON APPLICATION NATIF
-      await sendCode({ email: cleanEmail });
+      // 🚀 Appel de la vraie fonction d'initialisation du SDK client
+      await initLoginWithCode({ email: cleanEmail });
       setStep('otp');
       setStatus("Verification code generated.");
     } catch (err) {
@@ -41,6 +44,7 @@ function KoppiApp() {
     
     setStatus("Verifying...");
     try {
+      // 🚀 Appel de la vraie fonction de validation
       await loginWithCode({ email: email.trim().toLowerCase(), code: cleanCode });
     } catch (err) {
       console.error("Auth Error:", err);
