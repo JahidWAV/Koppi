@@ -13,26 +13,36 @@ function KoppiApp() {
   const [step, setStep] = useState('email'); // 'email' ou 'otp'
   const [status, setStatus] = useState('');
 
-  // 🚀 Déclenchement de l'envoi de l'e-mail par Privy
+  // 🚀 Déclenchement de l'envoi de l'e-mail par Privy (Correction des paramètres obligatoires)
   const handleSendCode = async () => {
-    if (!email.includes('@')) return;
+    const cleanEmail = email.trim().toLowerCase();
+    if (!cleanEmail.includes('@')) {
+      setStatus("Please enter a valid email address.");
+      return;
+    }
+    
     setStatus("Sending...");
     try {
-      await sendOtp({ email: email.trim().toLowerCase() });
+      // 🌟 FIX CRUCIAL : Privy exige de spécifier explicitement l'email dans l'objet de configuration
+      await sendOtp({ email: cleanEmail });
       setStep('otp');
       setStatus("Verification code generated.");
     } catch (err) {
-      setStatus("Error sending verification code.");
+      console.error("Privy Error:", err);
+      setStatus(err?.message || "Error sending verification code.");
     }
   };
 
   // 🚀 Validation du code OTP à 6 chiffres
   const handleVerifyCode = async () => {
-    if (code.length !== 6) return;
+    const cleanCode = code.trim();
+    if (cleanCode.length !== 6) return;
+    
     setStatus("Verifying...");
     try {
-      await loginWithCode({ email: email.trim().toLowerCase(), code: code.trim() });
+      await loginWithCode({ email: email.trim().toLowerCase(), code: cleanCode });
     } catch (err) {
+      console.error("Auth Error:", err);
       setStatus("Invalid code tokens.");
     }
   };
@@ -89,7 +99,7 @@ function KoppiApp() {
           {step === 'email' ? (
             <div>
               <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={styles.inputField} placeholder="Enter your email address" />
-              {/* 🌟 FIX ICI : style appliqué correctement sur le bouton submit */}
+              <div style={{ fontSize: '11px', color: '#888', marginBottom: '12px' }}>{status}</div>
               <button onClick={handleSendCode} style={styles.btnSubmit}>Continue</button>
             </div>
           ) : (
