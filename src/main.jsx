@@ -1,39 +1,32 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
-// 🌟 La correction est ici : on importe usePasswordlessAuth pour découpler l'UI custom
-import { PrivyProvider, usePrivy, usePasswordlessAuth } from '@privy-io/react-auth';
+// 🌟 Correction de l'import d'après la doc officielle : useLoginWithEmail
+import { PrivyProvider, usePrivy, useLoginWithEmail } from '@privy-io/react-auth';
 
 const PRIVY_APP_ID = "cmqollwmd000s0cky0evrjnkd"; 
 
 function KoppiApp() {
   const { authenticated, user, logout } = usePrivy();
   
-  // 🌟 On récupère les vraies méthodes d'envoi et de vérification Headless ici :
-  const { initLoginWithCode, loginWithCode } = usePasswordlessAuth();
+  // 🌟 On extrait les méthodes et le statut natifs du hook officiel
+  const { sendCode, loginWithCode, state } = useLoginWithEmail();
   
   const [view, setView] = useState('landing'); // 'landing' ou 'portal'
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [step, setStep] = useState('email'); // 'email' ou 'otp'
-  const [status, setStatus] = useState('');
 
   // Déclenchement de l'envoi de l'e-mail
   const handleSendCode = async () => {
     const cleanEmail = email.trim().toLowerCase();
-    if (!cleanEmail.includes('@')) {
-      setStatus("Please enter a valid email address.");
-      return;
-    }
+    if (!cleanEmail.includes('@')) return;
     
-    setStatus("Sending...");
     try {
-      // 🚀 Appel de la vraie fonction d'initialisation du SDK client
-      await initLoginWithCode({ email: cleanEmail });
+      // 🚀 Format officiel de la doc : sendCode({ email })
+      await sendCode({ email: cleanEmail });
       setStep('otp');
-      setStatus("Verification code generated.");
     } catch (err) {
       console.error("Privy Error:", err);
-      setStatus(err?.message || "Error sending verification code.");
     }
   };
 
@@ -42,14 +35,21 @@ function KoppiApp() {
     const cleanCode = code.trim();
     if (cleanCode.length !== 6) return;
     
-    setStatus("Verifying...");
     try {
-      // 🚀 Appel de la vraie fonction de validation
-      await loginWithCode({ email: email.trim().toLowerCase(), code: cleanCode });
+      // 🚀 Format officiel de la doc : loginWithCode({ code })
+      await loginWithCode({ code: cleanCode });
     } catch (err) {
       console.error("Auth Error:", err);
-      setStatus("Invalid code tokens.");
     }
+  };
+
+  // Gestion dynamique du texte de statut d'après l'état "state.status" de la doc
+  const getStatusMessage = () => {
+    if (state.status === 'sending-code') return "Sending...";
+    if (state.status === 'awaiting-code-input') return "Verification code generated.";
+    if (state.status === 'submitting-code') return "Verifying...";
+    if (state.status === 'error') return state.error?.message || "An error occurred.";
+    return "";
   };
 
   const styles = {
@@ -104,13 +104,13 @@ function KoppiApp() {
           {step === 'email' ? (
             <div>
               <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={styles.inputField} placeholder="Enter your email address" />
-              <div style={{ fontSize: '11px', color: '#888', marginBottom: '12px' }}>{status}</div>
+              <div style={{ fontSize: '11px', color: '#888', marginBottom: '12px' }}>{getStatusMessage()}</div>
               <button onClick={handleSendCode} style={styles.btnSubmit}>Continue</button>
             </div>
           ) : (
             <div>
               <input type="text" value={code} onChange={(e) => setCode(e.target.value)} maxLength="6" style={{ ...styles.inputField, fontSize: '16px', fontWeight: 'bold', letterSpacing: '4px' }} placeholder="000000" />
-              <div style={{ fontSize: '11px', color: '#888', marginBottom: '12px' }}>{status}</div>
+              <div style={{ fontSize: '11px', color: '#888', marginBottom: '12px' }}>{getStatusMessage()}</div>
               <button onClick={handleVerifyCode} style={styles.btnSubmit}>Verify and Connect</button>
               <button onClick={() => setStep('email')} style={{ ...styles.btnExit, marginTop: '16px', width: '100%', fontWeight: '700' }}>Go Back</button>
             </div>
