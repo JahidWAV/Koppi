@@ -103,8 +103,8 @@ function useWalletViewModel() {
         const logsJson = await logsRes.json();
         if (logsJson.result) {
           const userTxs = logsJson.result.filter(log => {
-            const from = "0x" + (log.topics[1]?.substring(26) || "");
-            const to = "0x" + (log.topics[2]?.substring(26) || "");
+            const from = log.topics[1] ? "0x" + log.topics[1].substring(26) : "";
+            const to = log.topics[2] ? "0x" + log.topics[2].substring(26) : "";
             return from.toLowerCase().includes(cleanAddress) || to.toLowerCase().includes(cleanAddress);
           }).map(log => {
             const fromAddr = "0x" + log.topics[1].substring(26);
