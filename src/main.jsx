@@ -67,10 +67,8 @@ function useWalletViewModel() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            jsonrpc: "2.0",
-            method: "eth_call", 
-            params: [{ to: usdcContract, data: dataParam }, "latest"], 
-            id: 1
+            jsonrpc: "2.0", method: "eth_call", 
+            params: [{ to: usdcContract, data: dataParam }, "latest"], id: 1
           })
         });
 
@@ -115,16 +113,7 @@ function useWalletViewModel() {
       } catch(e){}
     };
 
-    const hWs = new WebSocket("wss://api.hyperliquid.xyz/ws");
-    hWs.onopen = () => { hWs.send(JSON.stringify({ method: "subscribe", subscription: { type: "allMids" } })); };
-    hWs.onmessage = (event) => {
-      try {
-        const json = JSON.parse(event.data);
-        if (json.data?.mids?.HYPE) { setRawPricesUSD(prev => ({ ...prev, HYPE: parseFloat(json.data.mids.HYPE) })); }
-      } catch(e){}
-    };
-
-    return () => { bWs.close(); hWs.close(); };
+    return () => { bWs.close(); };
   }, []);
 
   const assets = useMemo(() => {
@@ -138,7 +127,6 @@ function useWalletViewModel() {
       { id: "ripple", name: "XRP", ticker: "XRP", color: "#23292F", balance: 0.0 },
       { id: "solana", name: "Solana", ticker: "SOL", color: "#14F195", balance: 0.0 },
       { id: "tron", name: "TRON", ticker: "TRX", color: "#EC0928", balance: 0.0 },
-      { id: "hyperliquid", name: "Hyperliquid", ticker: "HYPE", color: "#00F5D4", balance: 0.0 },
       { id: "dogecoin", name: "Dogecoin", ticker: "DOGE", color: "#BA9F33", balance: 0.0 }
     ];
 
@@ -153,21 +141,23 @@ function useWalletViewModel() {
     return currentCurrency.includes("USD") ? totalUSD : totalUSD * liveUsdToEurRate;
   }, [assets, currentCurrency, liveUsdToEurRate]);
 
-  const transactions = []; 
-
-  return { currentTheme, setCurrentTheme, currentCurrency, setCurrentCurrency, selectedTab, setSelectedTab, assets, totalBalanceCalculated, transactions };
+  return { currentTheme, setCurrentTheme, currentCurrency, setCurrentCurrency, selectedTab, setSelectedTab, assets, totalBalanceCalculated, transactions: [] };
 }
 
 // --- APP CORE ---
 function KoppiApp() {
   const { authenticated, user, logout, ready } = usePrivy(); 
-  const { sendCode, loginWithCode, state } = useLoginWithEmail();
+  const { sendCode, loginWithCode } = useLoginWithEmail();
   const vm = useWalletViewModel();
 
+  // Routage interne : 'landing', 'login', 'app'
+  const [view, setView] = useState('landing');
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [step, setStep] = useState('email');
   const [selectedAssetDetail, setSelectedAssetDetail] = useState(null);
+
+  const [activeSlide, setActiveSlide] = useState(0);
 
   const isDarkMode = vm.currentTheme === "Dark";
   const currencySymbol = vm.currentCurrency.includes("EUR") ? "€" : "$";
@@ -186,9 +176,14 @@ function KoppiApp() {
     document.documentElement.style.backgroundColor = bg;
   }, [bg]);
 
-  const acquiredAssets = useMemo(() => {
-    return vm.assets.filter(asset => asset.realBalance > 0);
-  }, [vm.assets]);
+  // Si l'utilisateur s'authentifie, on bascule automatiquement sur l'espace application
+  useEffect(() => {
+    if (ready && authenticated && view === 'login') {
+      setView('app');
+    }
+  }, [authenticated, ready, view]);
+
+  const acquiredAssets = useMemo(() => vm.assets.filter(asset => asset.realBalance > 0), [vm.assets]);
 
   const handleSendCode = async () => {
     if (!email.includes('@')) return;
@@ -197,47 +192,123 @@ function KoppiApp() {
 
   const handleVerifyCode = async () => {
     if (code.trim().length !== 6) return;
-    try { await loginWithCode({ code: code.trim() }); } catch(e){}
+    try { await loginWithCode({ code: code.trim() }); setView('app'); } catch(e){}
   };
 
   const handleLogout = async () => {
-    try {
-      await logout();
-      localStorage.clear();
-      window.location.reload();
-    } catch (e) {
-      console.error(e);
-    }
+    try { await logout(); localStorage.clear(); setView('landing'); window.location.reload(); } catch (e) {}
   };
 
   if (!ready) {
     return (
-      <div style={{ backgroundColor: bg, color: text, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: '-apple-system, sans-serif' }}>
-        <div style={{ letterSpacing: '4px', textTransform: 'uppercase', fontWeight: '400', fontSize: '20px', animation: 'pulse 1.8s infinite ease-in-out' }}>
-          KOPPI
+      <div style={{ backgroundColor: "#000000", color: "#F5F5F7", minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: '-apple-system, sans-serif' }}>
+        <div style={{ letterSpacing: '4px', textTransform: 'uppercase', fontWeight: '400', fontSize: '20px', animation: 'pulse 1.8s infinite ease-in-out' }}>KOPPI</div>
+        <style>{`@keyframes pulse { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }`}</style>
+      </div>
+    );
+  }
+
+  // --- RENDU 1 : SHOWCASE VITRINE (LANDING PAGE WEB3) ---
+  if (view === 'landing') {
+    return (
+      <div style={{ backgroundColor: bg, color: text, minHeight: '100vh', display: 'flex', flexDirection: 'column', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', WebkitFontSmoothing: 'antialiased' }}>
+        
+        {/* HEADER LIQUID GLASS INTELLIGENT */}
+        <div style={{ width: '100%', maxWidth: '1080px', margin: '0 auto', padding: '0 24px', position: 'sticky', top: '16px', zIndex: 100 }}>
+          <header style={{ height: '54px', border: `1px solid ${glassNavbarBorder}`, backgroundColor: glassNavbarBg, backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)', borderRadius: '27px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', boxShadow: '0 12px 40px 0 rgba(0, 0, 0, 0.5)' }}>
+            <div style={{ fontSize: '14px', fontWeight: '600', letterSpacing: '2px', cursor: 'pointer' }} onClick={() => setView('landing')}>KOPPI</div>
+            <nav style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
+              <span style={{ fontSize: '13px', color: text, fontWeight: '500', cursor: 'pointer' }}>Infrastructure</span>
+              <span style={{ fontSize: '13px', color: secondaryText, cursor: 'pointer' }}>Security</span>
+              <span style={{ fontSize: '13px', color: secondaryText, cursor: 'pointer' }}>Network</span>
+            </nav>
+            <button 
+              onClick={() => setView(authenticated ? 'app' : 'login')}
+              style={{ padding: '8px 20px', borderRadius: '20px', border: 'none', background: '#0A58CA', color: '#FFFFFF', fontSize: '13px', fontWeight: '500', cursor: 'pointer', boxShadow: '0 4px 14px 0 rgba(10, 88, 202, 0.4)' }}
+            >
+              Launch App
+            </button>
+          </header>
         </div>
+
+        {/* CONTENU DU SHOWCASE SLIDER ANIMÉ */}
+        <main style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 24px', maxWidth: '900px', margin: '0 auto', width: '100%' }}>
+          
+          <div style={{ width: '100%', minHeight: '340px', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {activeSlide === 0 && (
+              <div style={{ textAlign: 'center', animation: 'fadeIn 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards' }}>
+                <h1 style={{ fontSize: '56px', fontWeight: '300', letterSpacing: '-2px', marginBottom: '18px', lineHeight: '1.1' }}>
+                  Next-Gen Stablecoin <br/>Infrastructure.
+                </h1>
+                <p style={{ color: secondaryText, fontSize: '16px', maxWidth: '540px', margin: '0 auto 32px', lineHeight: '1.5' }}>
+                  An operating node engine designed for real-time asset tracking and cross-border settlement. Absolute sovereignty over digital money.
+                </p>
+              </div>
+            )}
+
+            {activeSlide === 1 && (
+              <div style={{ textAlign: 'center', animation: 'fadeIn 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards' }}>
+                <h1 style={{ fontSize: '56px', fontWeight: '300', letterSpacing: '-2px', marginBottom: '18px', lineHeight: '1.1' }}>
+                  Multi-Party Threshold <br/>Isolation.
+                </h1>
+                <p style={{ color: secondaryText, fontSize: '16px', maxWidth: '540px', margin: '0 auto 32px', lineHeight: '1.5' }}>
+                  Cryptographic protection layer executing secure validation nodes directly underneath your parameters. Zero data exposure.
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Sélecteurs de Slide (Dots) */}
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '64px' }}>
+            {[0, 1].map(idx => (
+              <button 
+                key={idx} 
+                onClick={() => setActiveSlide(idx)} 
+                style={{ width: '28px', height: '3px', borderRadius: '2px', border: 'none', background: activeSlide === idx ? text : border, cursor: 'pointer', transition: 'background 0.3s' }}
+              />
+            ))}
+          </div>
+
+          {/* Grille de Features Web3 Tri-Colonnes */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', width: '100%' }}>
+            <div style={{ background: cardBg, border: `1px solid ${border}`, padding: '28px', borderRadius: '18px' }}>
+              <div style={{ fontSize: '18px', marginBottom: '12px' }}>⚡ Base Network</div>
+              <div style={{ fontSize: '13px', color: secondaryText, lineHeight: '1.4' }}>Optimized on Base layer-2 architecture for immediate validation cycles and near-zero fees.</div>
+            </div>
+            <div style={{ background: cardBg, border: `1px solid ${border}`, padding: '28px', borderRadius: '18px' }}>
+              <div style={{ fontSize: '18px', marginBottom: '12px' }}>🔒 Aerodynamic Glass</div>
+              <div style={{ fontSize: '13px', color: secondaryText, lineHeight: '1.4' }}>Stunning desktop environment tailored to professional standards with responsive liquid modules.</div>
+            </div>
+            <div style={{ background: cardBg, border: `1px solid ${border}`, padding: '28px', borderRadius: '18px' }}>
+              <div style={{ fontSize: '18px', marginBottom: '12px' }}>📊 Live Stream Node</div>
+              <div style={{ fontSize: '13px', color: secondaryText, lineHeight: '1.4' }}>Continuous WebSocket connection streaming active global indexes for optimal portfolio accuracy.</div>
+            </div>
+          </div>
+        </main>
+
         <style>{`
-          @keyframes pulse {
-            0% { opacity: 0.3; transform: scale(0.98); }
-            50% { opacity: 1; transform: scale(1); }
-            100% { opacity: 0.3; transform: scale(0.98); }
+          @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
           }
         `}</style>
       </div>
     );
   }
 
-  if (!authenticated) {
+  // --- RENDU 2 : INTERFACE D'AUTHENTIFICATION PRIVY MALIGNE ---
+  if (view === 'login') {
     return (
-      <div style={{ backgroundColor: bg, color: text, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background-color 0.4s ease', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>
-        <div style={{ backgroundColor: cardBg, border: `1px solid ${border}`, padding: '40px', borderRadius: '24px', maxWidth: '400px', width: '100%', textAlign: 'center' }}>
-          <div style={{ letterSpacing: '3px', textTransform: 'uppercase', fontWeight: '600', fontSize: '11px', color: secondaryText, marginBottom: '24px' }}>Koppi Node</div>
+      <div style={{ backgroundColor: bg, color: text, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>
+        <div style={{ backgroundColor: cardBg, border: `1px solid ${border}`, padding: '40px', borderRadius: '24px', maxWidth: '400px', width: '100%', textAlign: 'center', position: 'relative' }}>
+          <button onClick={() => setStep('email') & setView('landing')} style={{ position: 'absolute', top: '24px', left: '24px', background: 'transparent', border: 'none', color: secondaryText, cursor: 'pointer', fontSize: '13px' }}>← Cancel</button>
+          <div style={{ letterSpacing: '3px', textTransform: 'uppercase', fontWeight: '600', fontSize: '11px', color: secondaryText, marginBottom: '24px', marginTop: '12px' }}>Koppi Node</div>
           <h2 style={{ fontSize: '28px', fontWeight: '600', marginBottom: '8px', letterSpacing: '-0.5px' }}>Sign In</h2>
-          <p style={{ color: secondaryText, fontSize: '14px', marginBottom: '32px', lineHeight: '1.4' }}>Access secure stablecoin infrastructure.</p>
+          <p style={{ color: secondaryText, fontSize: '14px', marginBottom: '32px' }}>Access secure stablecoin infrastructure.</p>
           
           {step === 'email' ? (
             <div>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email address" style={{ width: '100%', height: '48px', background: isDarkMode ? '#000000' : '#F5F5F7', border: `1px solid ${border}`, borderRadius: '12px', padding: '0 16px', fontSize: '14px', color: text, textAlign: 'center', outline: 'none', marginBottom: '16px', transition: 'border-color 0.2s' }} />
+              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email address" style={{ width: '100%', height: '48px', background: isDarkMode ? '#000000' : '#F5F5F7', border: `1px solid ${border}`, borderRadius: '12px', padding: '0 16px', fontSize: '14px', color: text, textAlign: 'center', outline: 'none', marginBottom: '16px' }} />
               <button onClick={handleSendCode} style={{ width: '100%', height: '48px', background: text, color: bg, fontWeight: '600', borderRadius: '24px', border: 'none', cursor: 'pointer', fontSize: '13px' }}>Continue</button>
             </div>
           ) : (
@@ -251,28 +322,15 @@ function KoppiApp() {
     );
   }
 
+  // --- RENDU 3 : DASHBOARD COMPLET INTÉGRAL (AUCUN CHANGEMENT STRUCTUREL) ---
   return (
     <div style={{ backgroundColor: bg, color: text, minHeight: '100vh', display: 'flex', transition: 'background-color 0.4s ease', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', WebkitFontSmoothing: 'antialiased' }}>
-      
       <div style={{ width: '100%', display: 'flex', flexDirection: 'column', padding: '24px 0 0' }}>
         
-        {/* HEADER LIQUID GLASS ULTRA-SOBRE */}
+        {/* HEADER LIQUID GLASS DU DASHBOARD */}
         <div style={{ width: '100%', maxWidth: '1080px', margin: '0 auto', padding: '0 24px', position: 'sticky', top: '16px', zIndex: 100 }}>
-          <header style={{ 
-            height: '54px', 
-            border: `1px solid ${glassNavbarBorder}`, 
-            backgroundColor: glassNavbarBg, 
-            backdropFilter: 'blur(30px)', 
-            WebkitBackdropFilter: 'blur(30px)',
-            borderRadius: '27px', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'space-between', 
-            padding: '0 20px',
-            boxShadow: isDarkMode ? '0 12px 40px 0 rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.03)' : '0 12px 40px 0 rgba(0, 0, 0, 0.03)'
-          }}>
-            <div style={{ fontSize: '14px', fontWeight: '600', letterSpacing: '2px', color: text, paddingLeft: '8px' }}>KOPPI</div>
-            
+          <header style={{ height: '54px', border: `1px solid ${glassNavbarBorder}`, backgroundColor: glassNavbarBg, backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)', borderRadius: '27px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', boxShadow: isDarkMode ? '0 12px 40px 0 rgba(0, 0, 0, 0.5)' : '0 12px 40px 0 rgba(0, 0, 0, 0.03)' }}>
+            <div style={{ fontSize: '14px', fontWeight: '600', letterSpacing: '2px', color: text, cursor: 'pointer' }} onClick={() => setView('landing')}>KOPPI</div>
             <nav style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
               {[
                 { id: 0, label: "Overview", icon: Icons.Overview },
@@ -282,148 +340,69 @@ function KoppiApp() {
               ].map(t => {
                 const isSelected = vm.selectedTab === t.id && !selectedAssetDetail;
                 return (
-                  <button 
-                    key={t.id} 
-                    onClick={() => { setSelectedAssetDetail(null); vm.setSelectedTab(t.id); }} 
-                    style={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      gap: '8px', 
-                      border: 'none', 
-                      fontSize: '13px', 
-                      fontWeight: isSelected ? '500' : '400', 
-                      cursor: 'pointer', 
-                      padding: '8px 18px', 
-                      borderRadius: '20px', 
-                      // 🌟 CORRECTION DE LA SURBRILLANCE : Bleu premium, propre, avec lueur diffuse subtile sans bavure
-                      background: isSelected ? '#0A58CA' : 'transparent',
-                      color: isSelected ? '#FFFFFF' : secondaryText, 
-                      boxShadow: isSelected ? '0 4px 14px 0 rgba(10, 88, 202, 0.4), inset 0 1px 0 0 rgba(255, 255, 255, 0.2)' : 'none',
-                      transition: 'all 0.15s ease-in-out'
-                    }}
-                  >
-                    <t.icon /> <span>{t.label}</span>
-                  </button>
+                  <button key={t.id} onClick={() => { setSelectedAssetDetail(null); vm.setSelectedTab(t.id); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', border: 'none', fontSize: '13px', fontWeight: isSelected ? '500' : '400', cursor: 'pointer', padding: '8px 18px', borderRadius: '20px', background: isSelected ? '#0A58CA' : 'transparent', color: isSelected ? '#FFFFFF' : secondaryText, boxShadow: isSelected ? '0 4px 14px 0 rgba(10, 88, 202, 0.4)' : 'none', transition: 'all 0.15s ease-in-out' }}><t.icon /> <span>{t.label}</span></button>
                 );
               })}
             </nav>
-
-            <div style={{ 
-              fontSize: '11px', 
-              color: secondaryText, 
-              fontFamily: 'monospace', 
-              padding: '5px 12px', 
-              borderRadius: '14px', 
-              border: `1px solid ${glassNavbarBorder}`
-            }}>
+            <div style={{ fontSize: '11px', color: secondaryText, fontFamily: 'monospace', padding: '5px 12px', borderRadius: '14px', border: `1px solid ${glassNavbarBorder}` }}>
               {user?.wallet?.address ? user.wallet.address.substring(0,6) + '...' + user.wallet.address.substring(user.wallet.address.length - 4) : "0x00...0000"}
             </div>
           </header>
         </div>
 
-        {/* --- ZONE CENTRALE PRINCIPALE --- */}
+        {/* PANNEAU CENTRAL PRINCIPAL APPLICATION */}
         <main style={{ flex: 1, padding: '70px 40px', margin: '0 auto', width: '100%', maxWidth: '1120px' }}>
-          
           {selectedAssetDetail ? (
             <div style={{ maxWidth: '680px', margin: '0 auto' }}>
-              <button onClick={() => setSelectedAssetDetail(null)} style={{ background: 'none', border: 'none', color: secondaryText, fontSize: '13px', cursor: 'pointer', marginBottom: '32px', display: 'flex', alignItems: 'center' }}>
-                ✕ Close Detail
-              </button>
-              
+              <button onClick={() => setSelectedAssetDetail(null)} style={{ background: 'none', border: 'none', color: secondaryText, fontSize: '13px', cursor: 'pointer', marginBottom: '32px' }}>✕ Close Detail</button>
               <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '20px', padding: '40px', textAlign: 'center', marginBottom: '32px' }}>
                 <h2 style={{ fontSize: '32px', fontWeight: '400', letterSpacing: '-1px', marginBottom: '6px' }}>{selectedAssetDetail.name}</h2>
                 <div style={{ fontSize: '14px', color: secondaryText, fontFamily: 'monospace', marginBottom: '32px' }}>{selectedAssetDetail.ticker} Assets</div>
-                
-                <div style={{ fontSize: '42px', fontWeight: '300', letterSpacing: '-1.5px', marginBottom: '8px' }}>
-                  {selectedAssetDetail.ticker === 'USDC' ? selectedAssetDetail.realBalance.toFixed(2) : selectedAssetDetail.realBalance} <span style={{ fontSize: '20px', color: secondaryText }}>{selectedAssetDetail.ticker}</span>
-                </div>
-                
-                <div style={{ fontSize: '14px', color: '#10B981', fontWeight: '500', marginBottom: '40px' }}>
-                  ≈ {vm.currentCurrency.includes("EUR") ? (selectedAssetDetail.priceEUR * selectedAssetDetail.realBalance).toFixed(2) + '€' : (selectedAssetDetail.priceUSD * selectedAssetDetail.realBalance).toFixed(2) + '$'}
-                </div>
-
-                <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
-                  <button style={{ height: '40px', padding: '0 24px', background: text, color: bg, fontWeight: '500', borderRadius: '20px', border: 'none', cursor: 'pointer', fontSize: '13px' }}>Buy</button>
-                  <button style={{ height: '40px', padding: '0 24px', background: 'transparent', color: text, fontWeight: '500', borderRadius: '20px', border: `1px solid ${border}`, cursor: 'pointer', fontSize: '13px' }}>Send</button>
-                </div>
+                <div style={{ fontSize: '42px', fontWeight: '300', letterSpacing: '-1.5px', marginBottom: '8px' }}>{selectedAssetDetail.ticker === 'USDC' ? selectedAssetDetail.realBalance.toFixed(2) : selectedAssetDetail.realBalance} <span style={{ fontSize: '20px', color: secondaryText }}>{selectedAssetDetail.ticker}</span></div>
+                <div style={{ fontSize: '14px', color: '#10B981', fontWeight: '500', marginBottom: '40px' }}>≈ {vm.currentCurrency.includes("EUR") ? (selectedAssetDetail.priceEUR * selectedAssetDetail.realBalance).toFixed(2) + '€' : (selectedAssetDetail.priceUSD * selectedAssetDetail.realBalance).toFixed(2) + '$'}</div>
+                <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}><button style={{ height: '40px', padding: '0 24px', background: text, color: bg, fontWeight: '500', borderRadius: '20px', border: 'none', cursor: 'pointer', fontSize: '13px' }}>Buy</button><button style={{ height: '40px', padding: '0 24px', background: 'transparent', color: text, fontWeight: '500', borderRadius: '20px', border: `1px solid ${border}`, cursor: 'pointer', fontSize: '13px' }}>Send</button></div>
               </div>
             </div>
           ) : (
             <>
-              {/* TAB 0 : PORTFOLIO */}
               {vm.selectedTab === 0 && (
                 <div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px 0 60px', textAlign: 'center' }}>
-                    <div style={{ fontSize: '46px', fontWeight: '300', letterSpacing: '-1.5px', fontFamily: '-apple-system, sans-serif', color: text, marginBottom: '24px' }}>
-                      {vm.totalBalanceCalculated.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{currencySymbol}
-                    </div>
-                    
-                    <div style={{ display: 'flex', gap: '10px' }}>
-                      <button style={{ height: '38px', padding: '0 22px', background: text, color: bg, fontWeight: '500', borderRadius: '19px', border: 'none', cursor: 'pointer', fontSize: '13px' }}>Add Money</button>
-                      <button style={{ height: '38px', padding: '0 22px', background: isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)', color: text, fontWeight: '500', borderRadius: '19px', border: 'none', cursor: 'pointer', fontSize: '13px' }}>Transfer</button>
-                    </div>
+                    <div style={{ fontSize: '46px', fontWeight: '300', letterSpacing: '-1.5px', fontFamily: '-apple-system, sans-serif', color: text, marginBottom: '24px' }}>{vm.totalBalanceCalculated.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{currencySymbol}</div>
+                    <div style={{ display: 'flex', gap: '10px' }}><button style={{ height: '38px', padding: '0 22px', background: text, color: bg, fontWeight: '500', borderRadius: '19px', border: 'none', cursor: 'pointer', fontSize: '13px' }}>Add Money</button><button style={{ height: '38px', padding: '0 22px', background: isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)', color: text, fontWeight: '500', borderRadius: '19px', border: 'none', cursor: 'pointer', fontSize: '13px' }}>Transfer</button></div>
                   </div>
-
                   <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: '48px' }}>
                     <div>
                       <h3 style={{ fontSize: '14px', fontWeight: '500', color: secondaryText, marginBottom: '16px' }}>Assets</h3>
                       <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '20px', overflow: 'hidden' }}>
-                        {acquiredAssets.length === 0 ? (
-                          <div style={{ padding: '32px', textAlign: 'center', color: secondaryText, fontSize: '13px' }}>
-                            No stablecoin balances found on this active node.
+                        {acquiredAssets.length === 0 ? <div style={{ padding: '32px', textAlign: 'center', color: secondaryText, fontSize: '13px' }}>No stablecoin balances found on this active node.</div> : acquiredAssets.map((asset, i) => (
+                          <div key={asset.id} onClick={() => setSelectedAssetDetail(asset)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: i < acquiredAssets.length - 1 ? `1px solid ${border}` : 'none', cursor: 'pointer' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}><div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: asset.color }} /><div><div style={{ fontWeight: '500', fontSize: '14px' }}>{asset.name}</div><div style={{ fontSize: '12px', color: secondaryText }}>{asset.ticker === 'USDC' ? asset.realBalance.toFixed(2) : asset.realBalance} {asset.ticker}</div></div></div>
+                            <div style={{ textAlign: 'right' }}><div style={{ fontWeight: '500', fontSize: '14px' }}>{vm.currentCurrency.includes("EUR") ? (asset.priceEUR * asset.realBalance).toFixed(2) + '€' : (asset.priceUSD * asset.realBalance).toFixed(2) + '$'}</div><div style={{ fontSize: '11px', color: asset.change24h >= 0 ? '#10B981' : '#EF4444' }}>{asset.change24h >= 0 ? '+' : ''}{asset.change24h.toFixed(2)}%</div></div>
                           </div>
-                        ) : (
-                          acquiredAssets.map((asset, i) => (
-                            <div key={asset.id} onClick={() => setSelectedAssetDetail(asset)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: i < acquiredAssets.length - 1 ? `1px solid ${border}` : 'none', cursor: 'pointer' }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                                <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: asset.color }} />
-                                <div>
-                                  <div style={{ fontWeight: '500', fontSize: '14px' }}>{asset.name}</div>
-                                  <div style={{ fontSize: '12px', color: secondaryText }}>
-                                    {asset.ticker === 'USDC' ? asset.realBalance.toFixed(2) : asset.realBalance} {asset.ticker}
-                                  </div>
-                                </div>
-                              </div>
-                              <div style={{ textAlign: 'right' }}>
-                                <div style={{ fontWeight: '500', fontSize: '14px' }}>{vm.currentCurrency.includes("EUR") ? (asset.priceEUR * asset.realBalance).toFixed(2) + '€' : (asset.priceUSD * asset.realBalance).toFixed(2) + '$'}</div>
-                                <div style={{ fontSize: '11px', color: asset.change24h >= 0 ? '#10B981' : '#EF4444' }}>{asset.change24h >= 0 ? '+' : ''}{asset.change24h.toFixed(2)}%</div>
-                              </div>
-                            </div>
-                          ))
-                        )}
+                        ))}
                       </div>
                     </div>
-
                     <div>
                       <h3 style={{ fontSize: '14px', fontWeight: '500', color: secondaryText, marginBottom: '16px' }}>Activity</h3>
-                      <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '20px', padding: '24px', textAlign: 'center' }}>
-                        <div style={{ fontSize: '13px', color: secondaryText }}>No transaction logs detected on Base Sepolia.</div>
-                      </div>
+                      <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '20px', padding: '24px', textAlign: 'center' }}><div style={{ fontSize: '13px', color: secondaryText }}>No transaction logs detected on Base Sepolia.</div></div>
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* TAB 1 : MARCHES */}
               {vm.selectedTab === 1 && (
                 <div style={{ maxWidth: '800px', margin: '0 auto' }}>
                   <h2 style={{ fontSize: '22px', fontWeight: '500', marginBottom: '24px', letterSpacing: '-0.5px' }}>Markets</h2>
-                  <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '14px', padding: '0 16px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <span style={{ color: secondaryText }}>🔍</span>
-                    <input type="text" placeholder="Search tokens..." style={{ width: '100%', height: '44px', border: 'none', background: 'transparent', outline: 'none', color: text, fontSize: '14px' }} />
-                  </div>
+                  <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '14px', padding: '0 16px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}><span style={{ color: secondaryText }}>🔍</span><input type="text" placeholder="Search tokens..." style={{ width: '100%', height: '44px', border: 'none', background: 'transparent', outline: 'none', color: text, fontSize: '14px' }} /></div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     {vm.assets.map(asset => (
-                      <div key={asset.id} onClick={() => setSelectedAssetDetail(asset)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 20px', background: cardBg, border: `1px solid ${border}`, borderRadius: '14px', cursor: 'pointer' }}>
-                        <div style={{ fontWeight: '500', fontSize: '14px' }}>{asset.ticker} <span style={{ fontWeight: '400', color: secondaryText, marginLeft: '6px', fontSize: '13px' }}>{asset.name}</span></div>
-                        <div style={{ fontWeight: '400', fontSize: '14px', fontFamily: 'monospace' }}>{asset.priceUSD.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</div>
-                      </div>
+                      <div key={asset.id} onClick={() => setSelectedAssetDetail(asset)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 20px', background: cardBg, border: `1px solid ${border}`, borderRadius: '14px', cursor: 'pointer' }}><div style={{ fontWeight: '500', fontSize: '14px' }}>{asset.ticker} <span style={{ fontWeight: '400', color: secondaryText, marginLeft: '6px', fontSize: '13px' }}>{asset.name}</span></div><div style={{ fontWeight: '400', fontSize: '14px', fontFamily: 'monospace' }}>{asset.priceUSD.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</div></div>
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* TAB 2 : VAULT */}
               {vm.selectedTab === 2 && (
                 <div style={{ textAlign: 'center', padding: '100px 0', maxWidth: '400px', margin: '0 auto' }}>
                   <h2 style={{ fontSize: '20px', fontWeight: '500', marginBottom: '8px' }}>Vault Security</h2>
@@ -431,35 +410,25 @@ function KoppiApp() {
                 </div>
               )}
 
-              {/* TAB 3 : SETTINGS */}
               {vm.selectedTab === 3 && (
                 <div style={{ maxWidth: '500px', margin: '0 auto' }}>
                   <h2 style={{ fontSize: '22px', fontWeight: '500', marginBottom: '24px', letterSpacing: '-0.5px' }}>Settings</h2>
                   <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '20px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
                     <div>
                       <label style={{ fontSize: '11px', color: secondaryText, fontWeight: '500', textTransform: 'uppercase', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>Interface Theme</label>
-                      <select value={vm.currentTheme} onChange={e => vm.setCurrentTheme(e.target.value)} style={{ width: '100%', height: '40px', background: bg, border: `1px solid ${border}`, borderRadius: '10px', padding: '0 10px', color: text, outline: 'none', fontSize: '13px' }}>
-                        <option value="Dark">Dark Mode</option>
-                        <option value="Light">Light Mode</option>
-                      </select>
+                      <select value={vm.currentTheme} onChange={e => vm.setCurrentTheme(e.target.value)} style={{ width: '100%', height: '40px', background: bg, border: `1px solid ${border}`, borderRadius: '10px', padding: '0 10px', color: text, outline: 'none', fontSize: '13px' }}><option value="Dark">Dark Mode</option><option value="Light">Light Mode</option></select>
                     </div>
                     <div>
                       <label style={{ fontSize: '11px', color: secondaryText, fontWeight: '500', textTransform: 'uppercase', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>Display Currency</label>
-                      <select value={vm.currentCurrency} onChange={e => vm.setCurrentCurrency(e.target.value)} style={{ width: '100%', height: '40px', background: bg, border: `1px solid ${border}`, borderRadius: '10px', padding: '0 10px', color: text, outline: 'none', fontSize: '13px' }}>
-                        <option value="USD ($)">USD ($)</option>
-                        <option value="EUR (€)">EUR (€)</option>
-                      </select>
+                      <select value={vm.currentCurrency} onChange={e => vm.setCurrentCurrency(e.target.value)} style={{ width: '100%', height: '40px', background: bg, border: `1px solid ${border}`, borderRadius: '10px', padding: '0 10px', color: text, outline: 'none', fontSize: '13px' }}><option value="USD ($)">USD ($)</option><option value="EUR (€)">EUR (€)</option></select>
                     </div>
                     <hr style={{ border: 'none', borderTop: `1px solid ${border}`, margin: '8px 0' }} />
-                    <button onClick={handleLogout} style={{ width: '100%', height: '44px', background: isDarkMode ? 'rgba(239, 68, 68, 0.12)' : '#FEE2E2', color: '#EF4444', fontWeight: '500', borderRadius: '22px', border: 'none', cursor: 'pointer', fontSize: '12px', transition: 'background-color 0.2s' }}>
-                      Disconnect Account
-                    </button>
+                    <button onClick={handleLogout} style={{ width: '100%', height: '44px', background: isDarkMode ? 'rgba(239, 68, 68, 0.12)' : '#FEE2E2', color: '#EF4444', fontWeight: '500', borderRadius: '22px', border: 'none', cursor: 'pointer', fontSize: '12px', transition: 'background-color 0.2s' }}>Disconnect Account</button>
                   </div>
                 </div>
               )}
             </>
           )}
-
         </main>
       </div>
     </div>
