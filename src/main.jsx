@@ -4,37 +4,37 @@ import { PrivyProvider, usePrivy, useLoginWithEmail } from '@privy-io/react-auth
 
 const PRIVY_APP_ID = "cmqollwmd000s0cky0evrjnkd";
 
-// --- ICÔNES SVG NATIVES (STYLE APPLE, SANS ÉMOJI) ---
+// --- ICÔNES SVG NATIVES (STYLE APPLE FINE LINE) ---
 const Icons = {
   Overview: () => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <path d="M20 12V8H4v10a2 2 0 0 0 2 2h14v-4" />
       <path d="M16 12h5a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-5a2 2 0 0 1-2-2v0a2 2 0 0 1 2-2z" />
       <path d="M4 8V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2" />
     </svg>
   ),
   Markets: () => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="11" cy="11" r="8" />
       <line x1="21" y1="21" x2="16.65" y2="16.65" />
     </svg>
   ),
   Vault: () => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <rect x="3" y="11" width="18" height="10" rx="2" />
       <path d="M12 2a7 7 0 0 0-7 7v2h14V9a7 7 0 0 0-7-7z" />
       <circle cx="12" cy="16" r="1" />
     </svg>
   ),
   Settings: () => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="3" />
       <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1-1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
     </svg>
   )
 };
 
-// --- HOOK DESKTOP DU WALLET VIEWMODEL ---
+// --- HOOK DESKTOP DU WALLET VIEWMODEL (WebSocket + Logique Blockchain iOS) ---
 function useWalletViewModel() {
   const { authenticated, user } = usePrivy();
   const [currentTheme, setCurrentTheme] = useState(() => localStorage.getItem("app_theme") || "Dark");
@@ -46,21 +46,24 @@ function useWalletViewModel() {
   const [rawPricesUSD, setRawPricesUSD] = useState({ BTC: 0, ETH: 0, USDT: 1, BNB: 0, USDC: 1, XRP: 0, SOL: 0, TRX: 0, HYPE: 0, DOGE: 0 });
   const [rawVariations24h, setRawVariations24h] = useState({ BTC: 0, ETH: 0, USDT: 0, BNB: 0, USDC: 0, XRP: 0, SOL: 0, TRX: 0, HYPE: 0, DOGE: 0 });
 
+  // Récupération de l'adresse du portefeuille connecté via Privy
   const walletAddress = user?.wallet?.address;
 
   useEffect(() => { localStorage.setItem("app_theme", currentTheme); }, [currentTheme]);
   useEffect(() => { localStorage.setItem("app_currency", currentCurrency); }, [currentCurrency]);
 
+  // FLUX RPC : Lecture réelle du solde ERC20 sur Base Sepolia (Fidèle à WalletViewModel.swift)
   useEffect(() => {
     if (!authenticated || !walletAddress) return;
 
     const fetchBlockchainBalance = async () => {
-      const rpcNodeUrl = "https://sepolia.base.org";[cite: 2]
-      const usdcContract = "0xD733D48f2a7F57D4559F98ae07f87Dab595E3523";[cite: 2]
+      const rpcNodeUrl = "https://sepolia.base.org"; 
+      const usdcContract = "0xD733D48f2a7F57D4559F98ae07f87Dab595E3523"; 
       
+      // Sécurisation et formatage de l'adresse pour le paramètre data (Padded à 64 caractères)
       const cleanAddress = walletAddress.replace("0x", "").toLowerCase();
       const paddedAddress = cleanAddress.padStart(64, "0");
-      const dataParam = "0x70a08231" + paddedAddress; 
+      const dataParam = "0x70a08231" + paddedAddress; // Signature de fonction balanceOf
 
       try {
         const response = await fetch(rpcNodeUrl, {
@@ -68,17 +71,21 @@ function useWalletViewModel() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             jsonrpc: "2.0",
-            method: "eth_call",[cite: 2]
-            params: [{ to: usdcContract, data: dataParam }, "latest"],[cite: 2]
+            method: "eth_call", 
+            params: [{ to: usdcContract, data: dataParam }, "latest"], 
             id: 1
           })
         });
 
         const json = await response.json();
         if (json.result && json.result !== "0x") {
+          // Conversion de la valeur hexadécimale brute reçue de la blockchain
           const hexValue = json.result.replace("0x", "");
           const rawValue = BigInt("0x" + hexValue);
-          const formattedBalance = Number(rawValue) / Math.pow(10, 18);[cite: 2]
+
+          // Ajustement des décimales basé sur l'exposant de ton code Swift (18 décimales)
+          const formattedBalance = Number(rawValue) / Math.pow(10, 18); 
+          
           setUsdcBalance(formattedBalance);
         }
       } catch (error) {
@@ -86,11 +93,13 @@ function useWalletViewModel() {
       }
     };
 
+    // Premier chargement immédiat puis actualisation cyclique toutes les 10 secondes
     fetchBlockchainBalance();
     const interval = setInterval(fetchBlockchainBalance, 10000);
     return () => clearInterval(interval);
   }, [authenticated, walletAddress]);
 
+  // Récupération Forex Rate
   useEffect(() => {
     fetch("https://api.frankfurter.dev/v1/latest?base=USD&symbols=EUR")
       .then(res => res.json())
@@ -98,6 +107,7 @@ function useWalletViewModel() {
       .catch(() => {});
   }, []);
 
+  // WebSockets temps réel
   useEffect(() => {
     const streams = "btcusdt@ticker/ethusdt@ticker/usdcusdt@ticker/xrpusdt@ticker/solusdt@ticker/trxusdt@ticker/dogeusdt@ticker/bnbusdt@ticker";
     const bWs = new WebSocket(`wss://stream.binance.com:9443/stream?streams=${streams}`);
@@ -134,7 +144,7 @@ function useWalletViewModel() {
       { id: "ethereum", name: "Ethereum", ticker: "ETH", color: "#627EEA", balance: 0.0 },
       { id: "tether", name: "Tether", ticker: "USDT", color: "#26A17B", balance: 0.0 },
       { id: "binancecoin", name: "BNB", ticker: "BNB", color: "#F3BA2F", balance: 0.0 },
-      { id: "usd-coin", name: "USDC", ticker: "USDC", color: "#2775CA", balance: usdcBalance },[cite: 2]
+      { id: "usd-coin", name: "USDC", ticker: "USDC", color: "#2775CA", balance: usdcBalance }, 
       { id: "ripple", name: "XRP", ticker: "XRP", color: "#23292F", balance: 0.0 },
       { id: "solana", name: "Solana", ticker: "SOL", color: "#14F195", balance: 0.0 },
       { id: "tron", name: "TRON", ticker: "TRX", color: "#EC0928", balance: 0.0 },
@@ -232,7 +242,7 @@ function KoppiApp() {
   return (
     <div style={{ backgroundColor: bg, color: text, minHeight: '100vh', display: 'flex', transition: 'background-color 0.4s ease', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', WebkitFontSmoothing: 'antialiased' }}>
       
-      {/* --- SIDEBAR RETRACTABLE --- */}
+      {/* --- SIDEBAR RETRACTABLE PERSISTANTE --- */}
       <aside style={{ width: sidebarCollapsed ? '80px' : '260px', borderRight: `1px solid ${border}`, display: 'flex', flexDirection: 'column', padding: '32px 16px', backgroundColor: cardBg, transition: 'width 0.3s cubic-bezier(0.25, 1, 0.5, 1)' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: sidebarCollapsed ? 'center' : 'space-between', marginBottom: '40px', padding: '0 12px' }}>
           {!sidebarCollapsed && <div style={{ fontSize: '18px', fontWeight: '600', letterSpacing: '3px' }}>KOPPI</div>}
@@ -250,7 +260,7 @@ function KoppiApp() {
           ].map(t => {
             const isSelected = vm.selectedTab === t.id;
             return (
-              <button key={t.id} onClick={() => vm.setSelectedTab(t.id)} style={{ display: 'flex', alignItems: 'center', justifyContent: sidebarCollapsed ? 'center' : 'flex-start', gap: '14px', width: '100%', height: '44px', padding: sidebarCollapsed ? '0' : '0 16px', borderRadius: '12px', border: 'none', background: isSelected ? (isDarkMode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)') : 'transparent', color: isSelected ? text : secondaryText, fontSize: '14px', fontWeight: isSelected ? '600' : '400', cursor: 'pointer', transition: 'all 0.2s' }} title={t.label}>
+              <button key={t.id} onClick={() => vm.setSelectedTab(t.id)} style={{ display: 'flex', alignItems: 'center', justifyContent: sidebarCollapsed ? 'center' : 'flex-start', gap: '14px', width: '100%', height: '44px', padding: sidebarCollapsed ? '0' : '0 12px', borderRadius: '12px', border: 'none', background: isSelected ? (isDarkMode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)') : 'transparent', color: isSelected ? text : secondaryText, fontSize: '14px', fontWeight: isSelected ? '600' : '400', cursor: 'pointer', transition: 'all 0.2s' }} title={t.label}>
                 <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: isSelected ? text : secondaryText }}><t.icon /></span> {!sidebarCollapsed && <span>{t.label}</span>}
               </button>
             );
@@ -262,7 +272,7 @@ function KoppiApp() {
         </div>
       </aside>
 
-      {/* --- PANNEAU CENTRAL --- */}
+      {/* --- ESPACE CENTRAL DE L'INTERFACE PRINCIPALE --- */}
       <main style={{ flex: 1, padding: '54px 64px', overflowY: 'auto', maxHeight: '100vh' }}>
         
         {vm.selectedTab === 0 && (
@@ -315,7 +325,7 @@ function KoppiApp() {
               <div>
                 <h3 style={{ fontSize: '14px', fontWeight: '500', color: secondaryText, marginBottom: '16px' }}>Activity</h3>
                 <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '20px', padding: '24px', textAlign: 'center' }}>
-                  <div style={{ fontSize: '20px', marginBottom: '8px', color: secondaryText }}><Icons.Overview /></div>
+                  <div style={{ fontSize: '20px', marginBottom: '8px' }}>📑</div>
                   <div style={{ fontSize: '13px', color: secondaryText }}>No transaction logs detected on Base Sepolia.</div>
                 </div>
               </div>
@@ -327,7 +337,7 @@ function KoppiApp() {
           <div style={{ maxWidth: '800px', margin: '0 auto' }}>
             <h2 style={{ fontSize: '22px', fontWeight: '500', marginBottom: '24px', letterSpacing: '-0.5px' }}>Markets</h2>
             <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '14px', padding: '0 16px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <span style={{ color: secondaryText, display: 'flex', alignItems: 'center' }}><Icons.Markets /></span>
+              <span style={{ color: secondaryText }}>🔍</span>
               <input type="text" placeholder="Search tokens..." style={{ width: '100%', height: '44px', border: 'none', background: 'transparent', outline: 'none', color: text, fontSize: '14px' }} />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -342,8 +352,8 @@ function KoppiApp() {
         )}
 
         {vm.selectedTab === 2 && (
-          <div style={{ textAlign: 'center', padding: '100px 0', maxWidth: '460px', margin: '0 auto' }}>
-            <div style={{ fontSize: '32px', marginBottom: '16px', color: secondaryText, display: 'flex', justifyContent: 'center' }}><Icons.Vault /></div>
+          <div style={{ textAlign: 'center', padding: '100px 0', maxWidth: '400px', margin: '0 auto' }}>
+            <div style={{ fontSize: '32px', marginBottom: '16px' }}>🛡️</div>
             <h2 style={{ fontSize: '20px', fontWeight: '500', marginBottom: '8px' }}>Vault Security</h2>
             <p style={{ color: secondaryText, fontSize: '14px', lineHeight: '1.5' }}>Your asset lockers are operating under end-to-end multi-party encryption layers.</p>
           </div>
@@ -351,8 +361,8 @@ function KoppiApp() {
 
         {vm.selectedTab === 3 && (
           <div style={{ maxWidth: '500px', margin: '0 auto' }}>
-            <h2 style={{ fontSize: '22px', fontWeight: '500', marginBottom: '24px', letterSpacing: '-0.5px' }}>Settings</h2>
-            <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '20px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <h2 style={{ fontSize: '20px', fontWeight: '500', marginBottom: '24px', letterSpacing: '-0.5px' }}>Settings</h2>
+            <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '16px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
               <div>
                 <label style={{ fontSize: '11px', color: secondaryText, fontWeight: '500', textTransform: 'uppercase', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>Interface Theme</label>
                 <select value={vm.currentTheme} onChange={e => vm.setCurrentTheme(e.target.value)} style={{ width: '100%', height: '40px', background: bg, border: `1px solid ${border}`, borderRadius: '10px', padding: '0 10px', color: text, outline: 'none', fontSize: '13px' }}>
@@ -368,7 +378,7 @@ function KoppiApp() {
                 </select>
               </div>
               <hr style={{ border: 'none', borderTop: `1px solid ${border}`, margin: '8px 0' }} />
-              <button onClick={handleLogout} style={{ width: '100%', height: '44px', background: isDarkMode ? 'rgba(239, 68, 68, 0.15)' : '#FEE2E2', color: '#EF4444', fontWeight: '500', borderRadius: '22px', border: 'none', cursor: 'pointer', fontSize: '13px', transition: 'background-color 0.2s' }}>
+              <button onClick={handleLogout} style={{ width: '100%', height: '44px', background: isDarkMode ? 'rgba(239, 68, 68, 0.12)' : '#FEE2E2', color: '#EF4444', fontWeight: '500', borderRadius: '22px', border: 'none', cursor: 'pointer', fontSize: '12px', transition: 'background-color 0.2s' }}>
                 Disconnect Account
               </button>
             </div>
