@@ -310,7 +310,9 @@ function KoppiApp() {
                         <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: asset.color }} />
                         <div>
                           <div style={{ fontWeight: '500', fontSize: '14px' }}>{asset.name}</div>
-                          <div style={{ fontSize: '12px', color: secondaryText }}>{asset.realBalance} {asset.ticker}</div>
+                          <div style={{ fontSize: '12px', color: secondaryText }}>
+  {asset.ticker === 'USDC' ? asset.realBalance.toFixed(2) : asset.realBalance} {asset.ticker}
+</div>
                         </div>
                       </div>
                       <div style={{ textAlign: 'right' }}>
