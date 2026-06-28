@@ -160,7 +160,7 @@ function useWalletViewModel() {
 
 // --- APP CORE ---
 function KoppiApp() {
-  const { authenticated, user, logout } = usePrivy();
+  const { authenticated, user, logout, ready } = usePrivy(); // Extraction du flag ready
   const { sendCode, loginWithCode, state } = useLoginWithEmail();
   const vm = useWalletViewModel();
 
@@ -168,7 +168,6 @@ function KoppiApp() {
   const [code, setCode] = useState('');
   const [step, setStep] = useState('email');
 
-  // Sous-page : Objet d'actif mémorisé
   const [selectedAssetDetail, setSelectedAssetDetail] = useState(null);
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
@@ -188,7 +187,6 @@ function KoppiApp() {
   const border = isDarkMode ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.06)";
   const secondaryText = isDarkMode ? "#8E8E93" : "#86868B";
 
-  // Filtrage exclusif des tokens possédés
   const acquiredAssets = useMemo(() => {
     return vm.assets.filter(asset => asset.realBalance > 0);
   }, [vm.assets]);
@@ -212,6 +210,24 @@ function KoppiApp() {
       console.error(e);
     }
   };
+
+  // 🌟 FLUX DE CAMOUFLAGE : Si Privy vérifie l'état de connexion de l'utilisateur, on affiche le Splash Screen du Logo (comme sur iOS)
+  if (!ready) {
+    return (
+      <div style={{ backgroundColor: bg, color: text, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: '-apple-system, sans-serif' }}>
+        <div style={{ letterSpacing: '4px', textTransform: 'uppercase', fontWeight: '400', fontSize: '20px', animation: 'pulse 1.8s infinite ease-in-out' }}>
+          KOPPI
+        </div>
+        <style>{`
+          @keyframes pulse {
+            0% { opacity: 0.3; transform: scale(0.98); }
+            50% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0.3; transform: scale(0.98); }
+          }
+        `}</style>
+      </div>
+    );
+  }
 
   if (!authenticated) {
     return (
@@ -240,7 +256,7 @@ function KoppiApp() {
   return (
     <div style={{ backgroundColor: bg, color: text, minHeight: '100vh', display: 'flex', transition: 'background-color 0.4s ease', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', WebkitFontSmoothing: 'antialiased' }}>
       
-      {/* --- SIDEBAR RETRACTABLE --- */}
+      {/* --- SIDEBAR RETRACTABLE PERSISTANTE --- */}
       <aside style={{ width: sidebarCollapsed ? '80px' : '260px', borderRight: `1px solid ${border}`, display: 'flex', flexDirection: 'column', padding: '32px 16px', backgroundColor: cardBg, transition: 'width 0.3s cubic-bezier(0.25, 1, 0.5, 1)' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: sidebarCollapsed ? 'center' : 'space-between', marginBottom: '40px', padding: '0 12px' }}>
           {!sidebarCollapsed && <div style={{ fontSize: '18px', fontWeight: '600', letterSpacing: '3px' }}>KOPPI</div>}
@@ -258,7 +274,7 @@ function KoppiApp() {
           ].map(t => {
             const isSelected = vm.selectedTab === t.id && !selectedAssetDetail;
             return (
-              <button key={t.id} onClick={() => { setSelectedAssetDetail(null); vm.setSelectedTab(t.id); }} style={{ display: 'flex', alignItems: 'center', justifyContent: sidebarCollapsed ? 'center' : 'flex-start', gap: '14px', width: '100%', height: '44px', padding: sidebarCollapsed ? '0' : '0 12px', borderRadius: '12px', border: 'none', background: isSelected ? (isDarkMode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)') : 'transparent', color: isSelected ? text : secondaryText, fontSize: '14px', fontWeight: isSelected ? '600' : '400', cursor: 'pointer', transition: 'all 0.2s' }} title={t.label}>
+              <button key={t.id} onClick={() => { setSelectedAssetDetail(null); vm.setSelectedTab(t.id); }} style={{ display: 'flex', alignItems: 'center', justifyContent: sidebarCollapsed ? 'center' : 'flex-start', gap: '14px', width: '100%', height: '44px', padding: sidebarCollapsed ? '0' : '0 16px', borderRadius: '12px', border: 'none', background: isSelected ? (isDarkMode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)') : 'transparent', color: isSelected ? text : secondaryText, fontSize: '14px', fontWeight: isSelected ? '600' : '400', cursor: 'pointer', transition: 'all 0.2s' }} title={t.label}>
                 <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: isSelected ? text : secondaryText }}><t.icon /></span> {!sidebarCollapsed && <span>{t.label}</span>}
               </button>
             );
@@ -270,10 +286,10 @@ function KoppiApp() {
         </div>
       </aside>
 
-      {/* --- ESPACE CENTRAL --- */}
+      {/* --- ESPACE CENTRAL DE L'INTERFACE PRINCIPALE --- */}
       <main style={{ flex: 1, padding: '54px 64px', overflowY: 'auto', maxHeight: '100vh' }}>
         
-        {/* SOUS-PAGE DE DÉTAIL CONTEXTUELLE SÉCURISÉE */}
+        {/* SOUS-PAGE DE DÉTAIL D'UN ASSET (DÉPLOIEMENT UNIQUE STYLE APPLE) */}
         {selectedAssetDetail ? (
           <div style={{ maxWidth: '680px', margin: '0 auto' }}>
             <button onClick={() => setSelectedAssetDetail(null)} style={{ background: 'none', border: 'none', color: secondaryText, fontSize: '13px', cursor: 'pointer', marginBottom: '32px', display: 'flex', alignItems: 'center' }}>
@@ -300,22 +316,21 @@ function KoppiApp() {
           </div>
         ) : (
           <>
-            {/* TAB 0 : OVERVIEW CONTENANT LES ASSETS FILTRÉS */}
+            {/* TAB 0 : CONTENU DU PORTFOLIO */}
             {vm.selectedTab === 0 && (
               <div style={{ maxWidth: '1040px', margin: '0 auto' }}>
                 <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '48px' }}>
-                  <div>
-                    <h1 style={{ fontSize: '28px', fontWeight: '500', letterSpacing: '-0.5px', marginBottom: '4px' }}>Account Overview</h1>
-                    <p style={{ color: secondaryText, fontSize: '14px' }}>Base Sepolia Environment</p>
-                  </div>
+                  {/* 🌟 NETTOYAGE : Les titres et textes superflus ont été supprimés ici */}
+                  <div style={{ flex: 1 }} />
                   <div style={{ fontSize: '12px', color: secondaryText, fontFamily: 'monospace', background: cardBg, padding: '6px 14px', borderRadius: '20px', border: `1px solid ${border}` }}>
                     {user?.wallet?.address ? user.wallet.address.substring(0,6) + '...' + user.wallet.address.substring(user.wallet.address.length - 4) : "0x00...0000"}
                   </div>
                 </header>
 
+                {/* Cadre de solde épuré style Apple */}
                 <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '20px', padding: '36px', marginBottom: '48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
-                    <div style={{ fontSize: '12px', fontWeight: '400', color: secondaryText, marginBottom: '6px' }}>Net Worth</div>
+                    {/* 🌟 NETTOYAGE : Le libellé Net Worth a été retiré */}
                     <div style={{ fontSize: '42px', fontWeight: '300', letterSpacing: '-1.5px', fontFamily: '-apple-system, sans-serif' }}>
                       {vm.totalBalanceCalculated.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{currencySymbol}
                     </div>
@@ -330,7 +345,6 @@ function KoppiApp() {
                   <div>
                     <h3 style={{ fontSize: '14px', fontWeight: '500', color: secondaryText, marginBottom: '16px' }}>Assets</h3>
                     <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '20px', overflow: 'hidden' }}>
-                      {/* Affichage exclusif des tokens possédés */}
                       {acquiredAssets.length === 0 ? (
                         <div style={{ padding: '32px', textAlign: 'center', color: secondaryText, fontSize: '13px' }}>
                           No stablecoin balances found on this active node.
@@ -367,7 +381,7 @@ function KoppiApp() {
               </div>
             )}
 
-            {/* TAB 1 : MARKETS */}
+            {/* TAB 1 : MARCHES */}
             {vm.selectedTab === 1 && (
               <div style={{ maxWidth: '800px', margin: '0 auto' }}>
                 <h2 style={{ fontSize: '22px', fontWeight: '500', marginBottom: '24px', letterSpacing: '-0.5px' }}>Markets</h2>
@@ -386,7 +400,7 @@ function KoppiApp() {
               </div>
             )}
 
-            {/* TAB 2 : VAULT */}
+            {/* TAB 2 : COFFRE FORT */}
             {vm.selectedTab === 2 && (
               <div style={{ textAlign: 'center', padding: '100px 0', maxWidth: '400px', margin: '0 auto' }}>
                 <h2 style={{ fontSize: '20px', fontWeight: '500', marginBottom: '8px' }}>Vault Security</h2>
@@ -394,7 +408,7 @@ function KoppiApp() {
               </div>
             )}
 
-            {/* TAB 3 : SETTINGS */}
+            {/* TAB 3 : RÉGLAGES */}
             {vm.selectedTab === 3 && (
               <div style={{ maxWidth: '500px', margin: '0 auto' }}>
                 <h2 style={{ fontSize: '22px', fontWeight: '500', marginBottom: '24px', letterSpacing: '-0.5px' }}>Settings</h2>
