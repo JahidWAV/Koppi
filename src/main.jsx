@@ -29,7 +29,7 @@ const Icons = {
   Settings: () => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="3" />
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1-1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1-1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1-2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1-2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
     </svg>
   )
 };
@@ -160,7 +160,7 @@ function useWalletViewModel() {
 
 // --- APP CORE ---
 function KoppiApp() {
-  const { authenticated, user, logout, ready } = usePrivy(); // Extraction du flag ready
+  const { authenticated, user, logout, ready } = usePrivy(); 
   const { sendCode, loginWithCode, state } = useLoginWithEmail();
   const vm = useWalletViewModel();
 
@@ -187,6 +187,12 @@ function KoppiApp() {
   const border = isDarkMode ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.06)";
   const secondaryText = isDarkMode ? "#8E8E93" : "#86868B";
 
+  // Injection immédiate d'une règle CSS pour forcer le body à hériter du fond sombre (Élimine le flash blanc initial)
+  useEffect(() => {
+    document.body.style.backgroundColor = bg;
+    document.documentElement.style.backgroundColor = bg;
+  }, [bg]);
+
   const acquiredAssets = useMemo(() => {
     return vm.assets.filter(asset => asset.realBalance > 0);
   }, [vm.assets]);
@@ -211,14 +217,15 @@ function KoppiApp() {
     }
   };
 
-  // 🌟 FLUX DE CAMOUFLAGE : Si Privy vérifie l'état de connexion de l'utilisateur, on affiche le Splash Screen du Logo (comme sur iOS)
+  // 🌟 PROTECTION SPLASH-SCREEN ANTI-EPILEPTIQUE DIRECTE
   if (!ready) {
     return (
-      <div style={{ backgroundColor: bg, color: text, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: '-apple-system, sans-serif' }}>
+      <div style={{ backgroundColor: "#000000", color: "#F5F5F7", minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: '-apple-system, sans-serif' }}>
         <div style={{ letterSpacing: '4px', textTransform: 'uppercase', fontWeight: '400', fontSize: '20px', animation: 'pulse 1.8s infinite ease-in-out' }}>
           KOPPI
         </div>
         <style>{`
+          body { background-color: #000000 !important; }
           @keyframes pulse {
             0% { opacity: 0.3; transform: scale(0.98); }
             50% { opacity: 1; transform: scale(1); }
@@ -239,7 +246,7 @@ function KoppiApp() {
           
           {step === 'email' ? (
             <div>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email address" style={{ width: '100%', height: '48px', background: isDarkMode ? '#000000' : '#F5F5F7', border: `1px solid ${border}`, borderRadius: '12px', padding: '0 16px', fontSize: '14px', color: text, textAlign: 'center', outline: 'none', marginBottom: '16px', transition: 'border-color 0.2s' }} />
+              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email address" style={{ width: '100%', height: '48px', background: isDarkMode ? '#000000' : '#F5F5F7', border: `1px solid ${border}`, borderRadius: '12px', padding: '0 16px', fontSize: '14px', color: text, textAlign: 'center', outline: 'none', marginBottom: '16px' }} />
               <button onClick={handleSendCode} style={{ width: '100%', height: '48px', background: text, color: bg, fontWeight: '600', borderRadius: '24px', border: 'none', cursor: 'pointer', fontSize: '13px' }}>Continue</button>
             </div>
           ) : (
@@ -274,7 +281,7 @@ function KoppiApp() {
           ].map(t => {
             const isSelected = vm.selectedTab === t.id && !selectedAssetDetail;
             return (
-              <button key={t.id} onClick={() => { setSelectedAssetDetail(null); vm.setSelectedTab(t.id); }} style={{ display: 'flex', alignItems: 'center', justifyContent: sidebarCollapsed ? 'center' : 'flex-start', gap: '14px', width: '100%', height: '44px', padding: sidebarCollapsed ? '0' : '0 16px', borderRadius: '12px', border: 'none', background: isSelected ? (isDarkMode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)') : 'transparent', color: isSelected ? text : secondaryText, fontSize: '14px', fontWeight: isSelected ? '600' : '400', cursor: 'pointer', transition: 'all 0.2s' }} title={t.label}>
+              <button key={t.id} onClick={() => { setSelectedAssetDetail(null); vm.setSelectedTab(t.id); }} style={{ display: 'flex', alignItems: 'center', justifyContent: sidebarCollapsed ? 'center' : 'flex-start', gap: '14px', width: '100%', height: '44px', padding: sidebarCollapsed ? '0' : '0 12px', borderRadius: '12px', border: 'none', background: isSelected ? (isDarkMode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)') : 'transparent', color: isSelected ? text : secondaryText, fontSize: '14px', fontWeight: isSelected ? '600' : '400', cursor: 'pointer', transition: 'all 0.2s' }} title={t.label}>
                 <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: isSelected ? text : secondaryText }}><t.icon /></span> {!sidebarCollapsed && <span>{t.label}</span>}
               </button>
             );
@@ -289,7 +296,7 @@ function KoppiApp() {
       {/* --- ESPACE CENTRAL DE L'INTERFACE PRINCIPALE --- */}
       <main style={{ flex: 1, padding: '54px 64px', overflowY: 'auto', maxHeight: '100vh' }}>
         
-        {/* SOUS-PAGE DE DÉTAIL D'UN ASSET (DÉPLOIEMENT UNIQUE STYLE APPLE) */}
+        {/* SOUS-PAGE DE DÉTAIL D'UN ASSET (STYLE NATIF APPLE) */}
         {selectedAssetDetail ? (
           <div style={{ maxWidth: '680px', margin: '0 auto' }}>
             <button onClick={() => setSelectedAssetDetail(null)} style={{ background: 'none', border: 'none', color: secondaryText, fontSize: '13px', cursor: 'pointer', marginBottom: '32px', display: 'flex', alignItems: 'center' }}>
@@ -316,31 +323,24 @@ function KoppiApp() {
           </div>
         ) : (
           <>
-            {/* TAB 0 : CONTENU DU PORTFOLIO */}
+            {/* TAB 0 : CONTENU DU PORTFOLIO AVEC DESIGN CENTRÉ IOS */}
             {vm.selectedTab === 0 && (
               <div style={{ maxWidth: '1040px', margin: '0 auto' }}>
-                <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '48px' }}>
-                  {/* 🌟 NETTOYAGE : Les titres et textes superflus ont été supprimés ici */}
-                  <div style={{ flex: 1 }} />
-                  <div style={{ fontSize: '12px', color: secondaryText, fontFamily: 'monospace', background: cardBg, padding: '6px 14px', borderRadius: '20px', border: `1px solid ${border}` }}>
-                    {user?.wallet?.address ? user.wallet.address.substring(0,6) + '...' + user.wallet.address.substring(user.wallet.address.length - 4) : "0x00...0000"}
+                
+                {/* 🌟 STRUCTURATION CENTRÉE DU SOLDE STYLE APP IOS */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 0 60px', textAlign: 'center' }}>
+                  <div style={{ fontSize: '52px', fontWeight: '300', letterSpacing: '-2px', fontFamily: '-apple-system, sans-serif', color: text, marginBottom: '20px' }}>
+                    {vm.totalBalanceCalculated.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{currencySymbol}
                   </div>
-                </header>
-
-                {/* Cadre de solde épuré style Apple */}
-                <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '20px', padding: '36px', marginBottom: '48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    {/* 🌟 NETTOYAGE : Le libellé Net Worth a été retiré */}
-                    <div style={{ fontSize: '42px', fontWeight: '300', letterSpacing: '-1.5px', fontFamily: '-apple-system, sans-serif' }}>
-                      {vm.totalBalanceCalculated.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{currencySymbol}
-                    </div>
-                  </div>
-                  <div style={{ display: 'flex', gap: '12px' }}>
-                    <button style={{ height: '40px', padding: '0 20px', background: text, color: bg, fontWeight: '500', borderRadius: '20px', border: 'none', cursor: 'pointer', fontSize: '12px' }}>Add Money</button>
-                    <button style={{ height: '40px', padding: '0 20px', background: 'transparent', color: text, fontWeight: '500', borderRadius: '20px', border: `1px solid ${border}`, cursor: 'pointer', fontSize: '12px' }}>Transfer</button>
+                  
+                  {/* Boutons d'actions ancrés juste en dessous */}
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <button style={{ height: '38px', padding: '0 22px', background: text, color: bg, fontWeight: '500', borderRadius: '19px', border: 'none', cursor: 'pointer', fontSize: '13px', transition: 'opacity 0.2s' }}>Add Money</button>
+                    <button style={{ height: '38px', padding: '0 22px', background: isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)', color: text, fontWeight: '500', borderRadius: '19px', border: 'none', cursor: 'pointer', fontSize: '13px', transition: 'background-color 0.2s' }}>Transfer</button>
                   </div>
                 </div>
 
+                {/* Grille inférieure d'affichage des listes */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: '48px' }}>
                   <div>
                     <h3 style={{ fontSize: '14px', fontWeight: '500', color: secondaryText, marginBottom: '16px' }}>Assets</h3>
