@@ -70,9 +70,9 @@ function useWalletViewModel() {
     if (!authenticated || !walletAddress) return;
 
     const fetchBlockchainData = async () => {
-      const rpcNodeUrl = "https://sepolia.base.org";[cite: 2]
-      const usdcContract = "0xD733D48f2a7F57D4559F98ae07f87Dab595E3523";[cite: 2]
-      const transferTopic = "0xddf252adb1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";[cite: 2]
+      const rpcNodeUrl = "https://sepolia.base.org";
+      const usdcContract = "0xD733D48f2a7F57D4559F98ae07f87Dab595E3523";
+      const transferTopic = "0xddf252adb1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
       
       const cleanAddress = walletAddress.replace("0x", "").toLowerCase();
       const paddedAddress = cleanAddress.padStart(64, "0");
@@ -82,22 +82,22 @@ function useWalletViewModel() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            jsonrpc: "2.0", method: "eth_call",[cite: 2]
-            params: [{ to: usdcContract, data: "0x70a08231" + paddedAddress }, "latest"], id: 1[cite: 2]
+            jsonrpc: "2.0", method: "eth_call",
+            params: [{ to: usdcContract, data: "0x70a08231" + paddedAddress }, "latest"], id: 1
           })
         });
         const balanceJson = await balanceRes.json();
         if (balanceJson.result && balanceJson.result !== "0x") {
           const rawValue = BigInt("0x" + balanceJson.result.replace("0x", ""));
-          setUsdcBalance(Number(rawValue) / Math.pow(10, 18));[cite: 2]
+          setUsdcBalance(Number(rawValue) / Math.pow(10, 18));
         }
 
         const logsRes = await fetch(rpcNodeUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            jsonrpc: "2.0", method: "eth_getLogs",[cite: 2]
-            params: [{ address: usdcContract, fromBlock: "0x0", toBlock: "latest", topics: [transferTopic] }], id: 2[cite: 2]
+            jsonrpc: "2.0", method: "eth_getLogs",
+            params: [{ address: usdcContract, fromBlock: "0x0", toBlock: "latest", topics: [transferTopic] }], id: 2
           })
         });
         const logsJson = await logsRes.json();
@@ -110,7 +110,7 @@ function useWalletViewModel() {
             const fromAddr = "0x" + log.topics[1].substring(26);
             const isSend = fromAddr.toLowerCase() === walletAddress.toLowerCase();
             const rawAmount = BigInt("0x" + log.data.replace("0x", ""));
-            const cryptoAmount = Number(rawAmount) / Math.pow(10, 18);[cite: 2]
+            const cryptoAmount = Number(rawAmount) / Math.pow(10, 18);
             return {
               id: log.transactionHash,
               type: isSend ? "Send" : "Receive",
@@ -141,7 +141,7 @@ function useWalletViewModel() {
 
   useEffect(() => {
     const streams = "btcusdt@ticker/ethusdt@ticker/usdcusdt@ticker/xrpusdt@ticker/solusdt@ticker/trxusdt@ticker/dogeusdt@ticker/bnbusdt@ticker";
-    const bWs = new WebSocket(`wss://stream.binance.com:9443/stream?streams=\(streams)`);
+    const bWs = new WebSocket(`wss://stream.binance.com:9443/stream?streams=${streams}`);
     bWs.onmessage = (event) => {
       try {
         const json = JSON.parse(event.data);
@@ -212,7 +212,6 @@ function KoppiApp() {
   const currencySymbol = vm.currentCurrency.includes("EUR") ? "€" : "$";
 
   const bg = isDarkMode ? "#000000" : "#F5F5F7";
-  // 🌟 FIX APPLIQUÉ ICI : Déclaration de variable propre et nettoyée sans boucle infinie
   const text = isDarkMode ? "#F5F5F7" : "#1D1D1F";
   const cardBg = isDarkMode ? "#1C1C1E" : "#FFFFFF";
   const border = isDarkMode ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.06)";
