@@ -6,16 +6,50 @@ const PRIVY_APP_ID = "cmqollwmd000s0cky0evrjnkd";
 
 // --- ICÔNES SVG STYLE APPLE (ZÉRO ÉMOJI) ---
 const Icons = {
-  Overview: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="9" /><rect x="14" y="3" width="7" height="5" /><rect x="14" y="12" width="7" height="9" /><rect x="3" y="16" width="7" height="5" /></svg>,
-  Markets: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="24" x2="16.65" y2="19.35" /></svg>,
-  Vault: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7s0 6 8 10z" /></svg>,
-  Settings: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>,
-  ArrowReceive: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="19" y1="5" x2="5" y2="19" /><polyline points="5 9 5 19 19 19" /></svg>,
-  ArrowSend: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="5" y1="19" x2="19" y2="5" /><polyline points="19 15 19 5 9 5" /></svg>,
-  Chevron: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="9 18 15 12 9 6" /></svg>
+  Overview: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="7" height="9" />
+      <rect x="14" y="3" width="7" height="5" />
+      <rect x="14" y="12" width="7" height="9" />
+      <rect x="3" y="16" width="7" height="5" />
+    </svg>
+  ),
+  Markets: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="8" />
+      <line x1="21" y1="24" x2="16.65" y2="19.35" />
+    </svg>
+  ),
+  Vault: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7s0 6 8 10z" />
+    </svg>
+  ),
+  Settings: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+    </svg>
+  ),
+  ArrowReceive: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <line x1="19" y1="5" x2="5" y2="19" />
+      <polyline points="5 9 5 19 19 19" />
+    </svg>
+  ),
+  ArrowSend: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <line x1="5" y1="19" x2="19" y2="5" />
+      <polyline points="19 15 19 5 9 5" />
+    </svg>
+  ),
+  Chevron: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <polyline points="9 18 15 12 9 6" />
+    </svg>
+  )
 };
 
-// --- HOOK DESKTOP DU WALLET VIEWMODEL ---
 function useWalletViewModel() {
   const { authenticated, user } = usePrivy();
   const [currentTheme, setCurrentTheme] = useState(() => localStorage.getItem("app_theme") || "Dark");
@@ -33,35 +67,32 @@ function useWalletViewModel() {
   useEffect(() => { localStorage.setItem("app_theme", currentTheme); }, [currentTheme]);
   useEffect(() => { localStorage.setItem("app_currency", currentCurrency); }, [currentCurrency]);
 
-  // Synchro Solde + Logs RPC de transferts réels[cite: 2]
   useEffect(() => {
     if (!authenticated || !walletAddress) return;
 
     const fetchBlockchainData = async () => {
-      const rpcNodeUrl = "https://sepolia.base.org";[cite: 2]
-      const usdcContract = "0xD733D48f2a7F57D4559F98ae07f87Dab595E3523";[cite: 2]
-      const transferTopic = "0xddf252adb1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";[cite: 2]
+      const rpcNodeUrl = "https://sepolia.base.org";
+      const usdcContract = "0xD733D48f2a7F57D4559F98ae07f87Dab595E3523";
+      const transferTopic = "0xddf252adb1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
       
       const cleanAddress = walletAddress.replace("0x", "").toLowerCase();
       const paddedAddress = cleanAddress.padStart(64, "0");
       
       try {
-        // 1. Appel Solde[cite: 2]
         const balanceRes = await fetch(rpcNodeUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            jsonrpc: "2.0", method: "eth_call",[cite: 2]
-            params: [{ to: usdcContract, data: "0x70a08231" + paddedAddress }, "latest"], id: 1[cite: 2]
+            jsonrpc: "2.0", method: "eth_call",
+            params: [{ to: usdcContract, data: "0x70a08231" + paddedAddress }, "latest"], id: 1
           })
         });
         const balanceJson = await balanceRes.json();
         if (balanceJson.result && balanceJson.result !== "0x") {
           const rawValue = BigInt("0x" + balanceJson.result.replace("0x", ""));
-          setUsdcBalance(Number(rawValue) / Math.pow(10, 18));[cite: 2]
+          setUsdcBalance(Number(rawValue) / Math.pow(10, 18));
         }
 
-        // 2. Appel Réel de tes logs d'événements de transfert de jetons (Token Transfers)[cite: 2]
         const logsRes = await fetch(rpcNodeUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -82,7 +113,7 @@ function useWalletViewModel() {
             const fromAddr = "0x" + log.topics[1].substring(26);
             const isSend = fromAddr.toLowerCase() === walletAddress.toLowerCase();
             const rawAmount = BigInt("0x" + (log.data ? log.data.replace("0x", "") : "0"));
-            const cryptoAmount = Number(rawAmount) / Math.pow(10, 18);[cite: 2]
+            const cryptoAmount = Number(rawAmount) / Math.pow(10, 18);
             return {
               id: log.transactionHash,
               type: isSend ? "Send" : "Receive",
@@ -94,7 +125,7 @@ function useWalletViewModel() {
           setTransactions(userTxs.slice(0, 10));
         }
       } catch (error) {
-        console.error("RPC Fetch Error:", error);
+        console.error("RPC Error:", error);
       }
     };
 
@@ -103,7 +134,6 @@ function useWalletViewModel() {
     return () => clearInterval(interval);
   }, [authenticated, walletAddress]);
 
-  // Frankfurter API Forex Rate[cite: 2]
   useEffect(() => {
     fetch("https://api.frankfurter.dev/v1/latest?base=USD&symbols=EUR")
       .then(res => res.json())
@@ -111,11 +141,9 @@ function useWalletViewModel() {
       .catch(() => {});
   }, []);
 
-  // WebSockets prix en direct[cite: 2]
   useEffect(() => {
     const streams = "btcusdt@ticker/ethusdt@ticker/usdcusdt@ticker/xrpusdt@ticker/solusdt@ticker/trxusdt@ticker/dogeusdt@ticker/bnbusdt@ticker";
     const bWs = new WebSocket(`wss://stream.binance.com:9443/stream?streams=${streams}`);
-    
     bWs.onmessage = (event) => {
       try {
         const json = JSON.parse(event.data);
@@ -137,7 +165,6 @@ function useWalletViewModel() {
         if (json.data?.mids?.HYPE) { setRawPricesUSD(prev => ({ ...prev, HYPE: parseFloat(json.data.mids.HYPE) })); }
       } catch(e){}
     };
-
     return () => { bWs.close(); hWs.close(); };
   }, []);
 
@@ -170,7 +197,6 @@ function useWalletViewModel() {
   return { currentTheme, setCurrentTheme, currentCurrency, setCurrentCurrency, selectedTab, setSelectedTab, assets, totalBalanceCalculated, transactions };
 }
 
-// --- APP CORE ---
 function KoppiApp() {
   const { authenticated, user, logout } = usePrivy();
   const { sendCode, loginWithCode, state } = useLoginWithEmail();
@@ -179,8 +205,6 @@ function KoppiApp() {
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [step, setStep] = useState('email');
-  
-  // État de navigation de la vue détaillée cliquable
   const [selectedAssetDetail, setSelectedAssetDetail] = useState(null);
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => localStorage.getItem("sidebar_collapsed") === "true");
@@ -195,40 +219,25 @@ function KoppiApp() {
   const border = isDarkMode ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.06)";
   const secondaryText = isDarkMode ? "#8E8E93" : "#86868B";
 
-  // 🌟 FILTRAGE DES BALANCES : Exclure tous les assets non acquis (balance = 0)[cite: 1]
   const acquiredAssets = useMemo(() => vm.assets.filter(a => a.realBalance > 0), [vm.assets]);
 
-  const handleSendCode = async () => {
-    if (!email.includes('@')) return;
-    try { await sendCode({ email: email.trim().toLowerCase() }); setStep('otp'); } catch(e){}
-  };
-
-  const handleVerifyCode = async () => {
-    if (code.trim().length !== 6) return;
-    try { await loginWithCode({ code: code.trim() }); } catch(e){}
-  };
-
-  const handleLogout = async () => {
-    try { await logout(); localStorage.clear(); window.location.reload(); } catch (e) { console.error(e); }
-  };
+  const handleLogout = async () => { try { await logout(); localStorage.clear(); window.location.reload(); } catch(e){} };
 
   if (!authenticated) {
     return (
-      <div style={{ backgroundColor: bg, color: text, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>
-        <div style={{ backgroundColor: cardBg, border: `1px solid ${border}`, padding: '40px', borderRadius: '24px', maxWidth: '400px', width: '100%', textAlign: 'center' }}>
-          <div style={{ letterSpacing: '3px', textTransform: 'uppercase', fontWeight: '600', fontSize: '11px', color: secondaryText, marginBottom: '24px' }}>Koppi Node</div>
-          <h2 style={{ fontSize: '28px', fontWeight: '600', marginBottom: '8px', letterSpacing: '-0.5px' }}>Sign In</h2>
-          <p style={{ color: secondaryText, fontSize: '14px', marginBottom: '32px', lineHeight: '1.4' }}>Access secure stablecoin infrastructure.</p>
-          
+      <div style={{ backgroundColor: bg, color: text, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: '-apple-system, sans-serif' }}>
+        <div style={{ backgroundColor: cardBg, border: `1px solid ${border}`, padding: '40px', borderRadius: '24px', maxWidth: '380px', width: '100%', textAlign: 'center' }}>
+          <h2 style={{ fontSize: '24px', fontWeight: '500', marginBottom: '6px', letterSpacing: '-0.5px' }}>Sign In</h2>
+          <p style={{ color: secondaryText, fontSize: '13px', marginBottom: '32px' }}>Access secure stablecoin infrastructure.</p>
           {step === 'email' ? (
             <div>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email address" style={{ width: '100%', height: '48px', background: isDarkMode ? '#000000' : '#F5F5F7', border: `1px solid ${border}`, borderRadius: '12px', padding: '0 16px', fontSize: '14px', color: text, textAlign: 'center', outline: 'none', marginBottom: '16px' }} />
-              <button onClick={handleSendCode} style={{ width: '100%', height: '48px', background: text, color: bg, fontWeight: '600', borderRadius: '24px', border: 'none', cursor: 'pointer', fontSize: '13px' }}>Continue</button>
+              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email address" style={{ width: '100%', height: '46px', background: isDarkMode ? '#000000' : '#F5F5F7', border: `1px solid ${border}`, borderRadius: '10px', padding: '0 16px', fontSize: '14px', color: text, textAlign: 'center', outline: 'none', marginBottom: '16px' }} />
+              <button onClick={handleSendCode} style={{ width: '100%', height: '46px', background: text, color: bg, fontWeight: '600', borderRadius: '23px', border: 'none', cursor: 'pointer', fontSize: '13px' }}>Continue</button>
             </div>
           ) : (
             <div>
-              <input type="text" value={code} onChange={e => setCode(e.target.value)} placeholder="000000" maxLength="6" style={{ width: '100%', height: '48px', background: isDarkMode ? '#000000' : '#F5F5F7', border: `1px solid ${border}`, borderRadius: '12px', padding: '0 16px', fontSize: '18px', fontWeight: '600', letterSpacing: '4px', color: text, textAlign: 'center', outline: 'none', marginBottom: '16px' }} />
-              <button onClick={handleVerifyCode} style={{ width: '100%', height: '48px', background: text, color: bg, fontWeight: '600', borderRadius: '24px', border: 'none', cursor: 'pointer', fontSize: '13px' }}>Verify and Connect</button>
+              <input type="text" value={code} onChange={e => setCode(e.target.value)} placeholder="000000" maxLength="6" style={{ width: '100%', height: '46px', background: isDarkMode ? '#000000' : '#F5F5F7', border: `1px solid ${border}`, borderRadius: '10px', padding: '0 16px', fontSize: '18px', fontWeight: '600', letterSpacing: '4px', color: text, textAlign: 'center', outline: 'none', marginBottom: '16px' }} />
+              <button onClick={handleVerifyCode} style={{ width: '100%', height: '46px', background: text, color: bg, fontWeight: '600', borderRadius: '23px', border: 'none', cursor: 'pointer', fontSize: '13px' }}>Verify</button>
             </div>
           )}
         </div>
@@ -237,15 +246,12 @@ function KoppiApp() {
   }
 
   return (
-    <div style={{ backgroundColor: bg, color: text, minHeight: '100vh', display: 'flex', transition: 'background-color 0.4s ease', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', WebkitFontSmoothing: 'antialiased' }}>
+    <div style={{ backgroundColor: bg, color: text, minHeight: '100vh', display: 'flex', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', WebkitFontSmoothing: 'antialiased' }}>
       
-      {/* --- SIDEBAR RETRACTABLE PERSISTANTE --- */}
-      <aside style={{ width: sidebarCollapsed ? '76px' : '250px', borderRight: `1px solid ${border}`, display: 'flex', flexDirection: 'column', padding: '32px 14px', backgroundColor: cardBg, transition: 'width 0.25s cubic-bezier(0.25, 1, 0.5, 1)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: sidebarCollapsed ? 'center' : 'space-between', marginBottom: '40px', padding: '0 12px' }}>
+      <aside style={{ width: sidebarCollapsed ? '72px' : '240px', borderRight: `1px solid ${border}`, display: 'flex', flexDirection: 'column', padding: '32px 14px', backgroundColor: cardBg, transition: 'width 0.25s cubic-bezier(0.25, 1, 0.5, 1)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: sidebarCollapsed ? 'center' : 'space-between', marginBottom: '40px', padding: '0 8px' }}>
           {!sidebarCollapsed && <div style={{ fontSize: '16px', fontWeight: '600', letterSpacing: '3px' }}>KOPPI</div>}
-          <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)} style={{ background: 'none', border: 'none', fontSize: '14px', color: secondaryText, cursor: 'pointer', padding: '4px' }}>
-            {sidebarCollapsed ? "→" : "←"}
-          </button>
+          <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)} style={{ background: 'none', border: 'none', color: secondaryText, cursor: 'pointer', fontSize: '14px' }}>{sidebarCollapsed ? "→" : "←"}</button>
         </div>
         
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>
@@ -263,20 +269,14 @@ function KoppiApp() {
             );
           })}
         </nav>
-
-        <div style={{ textAlign: 'center', fontSize: '11px', color: '#10B981', fontWeight: '500' }}>
-          {sidebarCollapsed ? "●" : "● Operational"}
-        </div>
       </aside>
 
-      {/* --- PANNEAU CENTRAL PRINCIPAL --- */}
       <main style={{ flex: 1, padding: '54px 64px', overflowY: 'auto', maxHeight: '100vh' }}>
         
-        {/* VUE DÉTAILLÉE QUAND UN ASSET EST CLIQUÉ */}
         {selectedAssetDetail ? (
           <div style={{ maxWidth: '680px', margin: '0 auto' }}>
             <button onClick={() => setSelectedAssetDetail(null)} style={{ background: 'none', border: 'none', color: secondaryText, fontSize: '13px', cursor: 'pointer', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '6px' }}>← Back to Overview</button>
-            <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '20px', padding: '32px', textAlign: 'center' }}>
+            <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '20px', padding: '32px', textAlign: 'center', marginBottom: '24px' }}>
               <h2 style={{ fontSize: '32px', fontWeight: '400', letterSpacing: '-1px', marginBottom: '4px' }}>{selectedAssetDetail.name} ({selectedAssetDetail.ticker})</h2>
               <p style={{ color: secondaryText, fontSize: '14px', marginBottom: '24px' }}>Live Asset Tracking Node</p>
               <div style={{ fontSize: '44px', fontWeight: '300', letterSpacing: '-1px' }}>
@@ -289,44 +289,37 @@ function KoppiApp() {
           </div>
         ) : (
           <>
-            {/* TAB 0 : CONTENU DU PORTFOLIO AVEC APPARENCE MINIMALISTE "APPLE" */}
             {vm.selectedTab === 0 && (
-              <div style={{ maxWidth: '1040px', margin: '0 auto' }}>
-                <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '48px' }}>
+              <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+                <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '40px' }}>
                   <div>
                     <h1 style={{ fontSize: '26px', fontWeight: '500', letterSpacing: '-0.5px', marginBottom: '4px' }}>Overview</h1>
-                    <p style={{ color: secondaryText, fontSize: '14px' }}>Base Sepolia Environment</p>
-                  </div>
-                  <div style={{ fontSize: '12px', color: secondaryText, fontFamily: 'monospace', background: cardBg, padding: '6px 14px', borderRadius: '20px', border: `1px solid ${border}` }}>
-                    {user?.wallet?.address ? user.wallet.address.substring(0,6) + '...' + user.wallet.address.substring(user.wallet.address.length - 4) : "0x00...0000"}
                   </div>
                 </header>
 
-                {/* Cadre de solde avec Police Fine Aérée standard Apple */}
-                <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '20px', padding: '36px', marginBottom: '48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '16px', padding: '36px', marginBottom: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
-                    <div style={{ fontSize: '12px', fontWeight: '500', color: secondaryText, marginBottom: '6px' }}>Net Worth</div>
-                    <div style={{ fontSize: '42px', fontWeight: '300', letterSpacing: '-1.5px', fontFamily: '-apple-system, sans-serif' }}>
+                    <div style={{ fontSize: '11px', color: secondaryText, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '6px' }}>Net Worth</div>
+                    <div style={{ fontSize: '42px', fontWeight: '300', letterSpacing: '-1.5px', fontFamily: '-apple-system-headline, sans-serif' }}>
                       {vm.totalBalanceCalculated.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{currencySymbol}
                     </div>
                   </div>
-                  <div style={{ display: 'flex', gap: '12px' }}>
+                  <div style={{ display: 'flex', gap: '8px' }}>
                     <button style={{ height: '36px', padding: '0 16px', background: text, color: bg, fontWeight: '500', borderRadius: '18px', border: 'none', cursor: 'pointer', fontSize: '12px' }}>Add Money</button>
                     <button style={{ height: '36px', padding: '0 16px', background: 'transparent', color: text, fontWeight: '500', borderRadius: '18px', border: `1px solid ${border}`, cursor: 'pointer', fontSize: '12px' }}>Transfer</button>
                   </div>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: '48px' }}>
-                  {/* Affichage des Assets acquis cliquables */}
                   <div>
-                    <h3 style={{ fontSize: '13px', fontWeight: '500', color: secondaryText, marginBottom: '16px' }}>Assets</h3>
-                    <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '20px', overflow: 'hidden' }}>
+                    <h3 style={{ fontSize: '13px', fontWeight: '500', color: secondaryText, marginBottom: '14px' }}>Assets</h3>
+                    <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '16px', overflow: 'hidden' }}>
                       {acquiredAssets.length === 0 ? (
                         <div style={{ padding: '24px', textAlign: 'center', color: secondaryText, fontSize: '13px' }}>Your wallet is empty. Deposit stablecoins to activate the node.</div>
                       ) : (
                         acquiredAssets.map((asset, i) => (
                           <div key={asset.id} onClick={() => setSelectedAssetDetail(asset)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: i < acquiredAssets.length - 1 ? `1px solid ${border}` : 'none', cursor: 'pointer', transition: 'background 0.2s' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                               <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: asset.color }} />
                               <div>
                                 <div style={{ fontWeight: '500', fontSize: '14px' }}>{asset.name}</div>
@@ -345,10 +338,9 @@ function KoppiApp() {
                     </div>
                   </div>
 
-                  {/* Vrais logs de transactions Base Sepolia décodés via RPC */}
                   <div>
-                    <h3 style={{ fontSize: '13px', fontWeight: '500', color: secondaryText, marginBottom: '16px' }}>Activity Logs</h3>
-                    <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '20px', overflow: 'hidden' }}>
+                    <h3 style={{ fontSize: '13px', fontWeight: '500', color: secondaryText, marginBottom: '14px' }}>Activity Logs</h3>
+                    <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '16px', overflow: 'hidden' }}>
                       {vm.transactions.length === 0 ? (
                         <div style={{ padding: '32px 24px', textAlign: 'center', color: secondaryText, fontSize: '13px' }}>No direct Base Sepolia logs identified.</div>
                       ) : (
@@ -375,14 +367,9 @@ function KoppiApp() {
               </div>
             )}
 
-            {/* TAB 1 : EXPLORATEUR DE MARCHÉS SANS ÉMOJI */}
             {vm.selectedTab === 1 && (
               <div style={{ maxWidth: '740px', margin: '0 auto' }}>
                 <h2 style={{ fontSize: '20px', fontWeight: '500', marginBottom: '20px', letterSpacing: '-0.3px' }}>Markets</h2>
-                <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '14px', padding: '0 16px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <span style={{ color: secondaryText }}>🔍</span>
-                  <input type="text" placeholder="Search tokens..." style={{ width: '100%', height: '44px', border: 'none', background: 'transparent', outline: 'none', color: text, fontSize: '14px' }} />
-                </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   {vm.assets.map(asset => (
                     <div key={asset.id} onClick={() => setSelectedAssetDetail(asset)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 20px', background: cardBg, border: `1px solid ${border}`, borderRadius: '12px', cursor: 'pointer' }}>
@@ -394,7 +381,6 @@ function KoppiApp() {
               </div>
             )}
 
-            {/* TAB 2 : LE COFFRE FORT ULTRA-MINIMALISTE */}
             {vm.selectedTab === 2 && (
               <div style={{ textAlign: 'center', padding: '120px 0', maxWidth: '400px', margin: '0 auto' }}>
                 <h2 style={{ fontSize: '18px', fontWeight: '500', marginBottom: '8px' }}>Vault Security Encryption</h2>
@@ -402,7 +388,6 @@ function KoppiApp() {
               </div>
             )}
 
-            {/* TAB 3 : RÉGLAGES */}
             {vm.selectedTab === 3 && (
               <div style={{ maxWidth: '500px', margin: '0 auto' }}>
                 <h2 style={{ fontSize: '20px', fontWeight: '500', marginBottom: '24px' }}>Settings</h2>
