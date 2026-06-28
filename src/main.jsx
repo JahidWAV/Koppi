@@ -29,7 +29,7 @@ const Icons = {
   Settings: () => (
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="3" />
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1-2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1-1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1-2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
     </svg>
   )
 };
@@ -55,8 +55,8 @@ function useWalletViewModel() {
     if (!authenticated || !walletAddress) return;
 
     const fetchBlockchainBalance = async () => {
-      const rpcNodeUrl = "https://sepolia.base.org"; 
-      const usdcContract = "0xD733D48f2a7F57D4559F98ae07f87Dab595E3523"; 
+      const rpcNodeUrl = "https://sepolia.base.org";
+      const usdcContract = "0xD733D48f2a7F57D4559F98ae07f87Dab595E3523";
       
       const cleanAddress = walletAddress.replace("0x", "").toLowerCase();
       const paddedAddress = cleanAddress.padStart(64, "0");
@@ -67,7 +67,7 @@ function useWalletViewModel() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            jsonrpc: "2.0", method: "eth_call", 
+            jsonrpc: "2.0", method: "eth_call",
             params: [{ to: usdcContract, data: dataParam }, "latest"], id: 1
           })
         });
@@ -76,7 +76,7 @@ function useWalletViewModel() {
         if (json.result && json.result !== "0x") {
           const hexValue = json.result.replace("0x", "");
           const rawValue = BigInt("0x" + hexValue);
-          const formattedBalance = Number(rawValue) / Math.pow(10, 18); 
+          const formattedBalance = Number(rawValue) / Math.pow(10, 18);
           setUsdcBalance(formattedBalance);
         }
       } catch (error) {
@@ -123,7 +123,7 @@ function useWalletViewModel() {
       { id: "ethereum", name: "Ethereum", ticker: "ETH", color: "#627EEA", balance: 0.0 },
       { id: "tether", name: "Tether", ticker: "USDT", color: "#26A17B", balance: 0.0 },
       { id: "binancecoin", name: "BNB", ticker: "BNB", color: "#F3BA2F", balance: 0.0 },
-      { id: "usd-coin", name: "USDC", ticker: "USDC", color: "#2775CA", balance: usdcBalance }, 
+      { id: "usd-coin", name: "USDC", ticker: "USDC", color: "#2775CA", balance: usdcBalance },
       { id: "ripple", name: "XRP", ticker: "XRP", color: "#23292F", balance: 0.0 },
       { id: "solana", name: "Solana", ticker: "SOL", color: "#14F195", balance: 0.0 },
       { id: "tron", name: "TRON", ticker: "TRX", color: "#EC0928", balance: 0.0 },
@@ -150,7 +150,6 @@ function KoppiApp() {
   const { sendCode, loginWithCode } = useLoginWithEmail();
   const vm = useWalletViewModel();
 
-  // Routage interne : 'landing', 'login', 'app'
   const [view, setView] = useState('landing');
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
@@ -176,7 +175,6 @@ function KoppiApp() {
     document.documentElement.style.backgroundColor = bg;
   }, [bg]);
 
-  // Si l'utilisateur s'authentifie, on bascule automatiquement sur l'espace application
   useEffect(() => {
     if (ready && authenticated && view === 'login') {
       setView('app');
@@ -208,12 +206,10 @@ function KoppiApp() {
     );
   }
 
-  // --- RENDU 1 : SHOWCASE VITRINE (LANDING PAGE WEB3) ---
+  // --- RENDU 1 : LANDING PAGE WEB3 ---
   if (view === 'landing') {
     return (
       <div style={{ backgroundColor: bg, color: text, minHeight: '100vh', display: 'flex', flexDirection: 'column', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', WebkitFontSmoothing: 'antialiased' }}>
-        
-        {/* HEADER LIQUID GLASS INTELLIGENT */}
         <div style={{ width: '100%', maxWidth: '1080px', margin: '0 auto', padding: '0 24px', position: 'sticky', top: '16px', zIndex: 100 }}>
           <header style={{ height: '54px', border: `1px solid ${glassNavbarBorder}`, backgroundColor: glassNavbarBg, backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)', borderRadius: '27px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', boxShadow: '0 12px 40px 0 rgba(0, 0, 0, 0.5)' }}>
             <div style={{ fontSize: '14px', fontWeight: '600', letterSpacing: '2px', cursor: 'pointer' }} onClick={() => setView('landing')}>KOPPI</div>
@@ -231,45 +227,28 @@ function KoppiApp() {
           </header>
         </div>
 
-        {/* CONTENU DU SHOWCASE SLIDER ANIMÉ */}
         <main style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 24px', maxWidth: '900px', margin: '0 auto', width: '100%' }}>
-          
           <div style={{ width: '100%', minHeight: '340px', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {activeSlide === 0 && (
-              <div style={{ textAlign: 'center', animation: 'fadeIn 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards' }}>
-                <h1 style={{ fontSize: '56px', fontWeight: '300', letterSpacing: '-2px', marginBottom: '18px', lineHeight: '1.1' }}>
-                  Next-Gen Stablecoin <br/>Infrastructure.
-                </h1>
-                <p style={{ color: secondaryText, fontSize: '16px', maxWidth: '540px', margin: '0 auto 32px', lineHeight: '1.5' }}>
-                  An operating node engine designed for real-time asset tracking and cross-border settlement. Absolute sovereignty over digital money.
-                </p>
+              <div style={{ textAlign: 'center', animation: 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}>
+                <h1 style={{ fontSize: '56px', fontWeight: '300', letterSpacing: '-2px', marginBottom: '18px', lineHeight: '1.1' }}>Next-Gen Stablecoin <br/>Infrastructure.</h1>
+                <p style={{ color: secondaryText, fontSize: '16px', maxWidth: '540px', margin: '0 auto 32px', lineHeight: '1.5' }}>An operating node engine designed for real-time asset tracking and cross-border settlement. Absolute sovereignty over digital money.</p>
               </div>
             )}
-
             {activeSlide === 1 && (
-              <div style={{ textAlign: 'center', animation: 'fadeIn 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards' }}>
-                <h1 style={{ fontSize: '56px', fontWeight: '300', letterSpacing: '-2px', marginBottom: '18px', lineHeight: '1.1' }}>
-                  Multi-Party Threshold <br/>Isolation.
-                </h1>
-                <p style={{ color: secondaryText, fontSize: '16px', maxWidth: '540px', margin: '0 auto 32px', lineHeight: '1.5' }}>
-                  Cryptographic protection layer executing secure validation nodes directly underneath your parameters. Zero data exposure.
-                </p>
+              <div style={{ textAlign: 'center', animation: 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}>
+                <h1 style={{ fontSize: '56px', fontWeight: '300', letterSpacing: '-2px', marginBottom: '18px', lineHeight: '1.1' }}>Multi-Party Threshold <br/>Isolation.</h1>
+                <p style={{ color: secondaryText, fontSize: '16px', maxWidth: '540px', margin: '0 auto 32px', lineHeight: '1.5' }}>Cryptographic protection layer executing secure validation nodes directly underneath your parameters. Zero data exposure.</p>
               </div>
             )}
           </div>
 
-          {/* Sélecteurs de Slide (Dots) */}
           <div style={{ display: 'flex', gap: '8px', marginBottom: '64px' }}>
             {[0, 1].map(idx => (
-              <button 
-                key={idx} 
-                onClick={() => setActiveSlide(idx)} 
-                style={{ width: '28px', height: '3px', borderRadius: '2px', border: 'none', background: activeSlide === idx ? text : border, cursor: 'pointer', transition: 'background 0.3s' }}
-              />
+              <button key={idx} onClick={() => setActiveSlide(idx)} style={{ width: '28px', height: '3px', borderRadius: '2px', border: 'none', background: activeSlide === idx ? text : border, cursor: 'pointer', transition: 'background 0.3s' }} />
             ))}
           </div>
 
-          {/* Grille de Features Web3 Tri-Colonnes */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', width: '100%' }}>
             <div style={{ background: cardBg, border: `1px solid ${border}`, padding: '28px', borderRadius: '18px' }}>
               <div style={{ fontSize: '18px', marginBottom: '12px' }}>⚡ Base Network</div>
@@ -285,10 +264,39 @@ function KoppiApp() {
             </div>
           </div>
         </main>
+      </div>
+    );
+  }
 
+  // --- RENDU 2 : FORMULAIRE D'AUTHENTIFICATION PRO ---
+  if (view === 'login') {
+    return (
+      <div style={{ backgroundColor: '#000000', color: '#F5F5F7', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: '-apple-system, sans-serif', WebkitFontSmoothing: 'antialiased' }}>
+        <div style={{ backgroundColor: '#000000', border: '1px solid rgba(255, 255, 255, 0.1)', padding: '48px 40px', borderRadius: '24px', maxWidth: '390px', width: '100%', textAlign: 'center', boxShadow: '0 24px 60px rgba(0,0,0,0.8)', animation: 'fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}>
+          
+          <button onClick={() => setStep('email') & setView('landing')} style={{ display: 'block', background: 'transparent', border: 'none', color: '#8E8E93', cursor: 'pointer', fontSize: '13px', marginBottom: '32px', textAlign: 'left', padding: 0 }}>
+            ✕ Back to Terminal
+          </button>
+          
+          <div style={{ letterSpacing: '4px', textTransform: 'uppercase', fontWeight: '400', fontSize: '14px', color: '#8E8E93', marginBottom: '12px' }}>KOPPI NODE</div>
+          <h2 style={{ fontSize: '32px', fontWeight: '300', marginBottom: '8px', letterSpacing: '-1px', color: '#F5F5F7' }}>Access Gate</h2>
+          <p style={{ color: '#8E8E93', fontSize: '13px', marginBottom: '36px', lineHeight: '1.4' }}>Connect your decentralized parameters to secure stablecoin infrastructure.</p>
+          
+          {step === 'email' ? (
+            <div>
+              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Enter network email address" style={{ width: '100%', height: '46px', background: '#000000', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '10px', padding: '0 16px', fontSize: '14px', color: '#F5F5F7', textAlign: 'center', outline: 'none', marginBottom: '18px', transition: 'border-color 0.2s' }} onFocus={e => e.target.style.borderColor = '#0A58CA'} onBlur={e => e.target.style.borderColor = 'rgba(255, 255, 255, 0.15)'} />
+              <button onClick={handleSendCode} style={{ width: '100%', height: '46px', background: '#F5F5F7', color: '#000000', fontWeight: '500', borderRadius: '23px', border: 'none', cursor: 'pointer', fontSize: '13px', boxShadow: '0 4px 12px rgba(255,255,255,0.1)' }}>Request OTP Key</button>
+            </div>
+          ) : (
+            <div>
+              <input type="text" value={code} onChange={e => setCode(e.target.value)} placeholder="000000" maxLength="6" style={{ width: '100%', height: '46px', background: '#000000', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '10px', padding: '0 16px', fontSize: '20px', fontWeight: '500', letterSpacing: '6px', color: '#F5F5F7', textAlign: 'center', outline: 'none', marginBottom: '18px' }} />
+              <button onClick={handleVerifyCode} style={{ width: '100%', height: '46px', background: '#0A58CA', color: '#FFFFFF', fontWeight: '500', borderRadius: '23px', border: 'none', cursor: 'pointer', fontSize: '13px', boxShadow: '0 4px 14px rgba(10, 88, 202, 0.4)' }}>Authorize Connection</button>
+            </div>
+          )}
+        </div>
         <style>{`
-          @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(12px); }
+          @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
           }
         `}</style>
@@ -296,38 +304,11 @@ function KoppiApp() {
     );
   }
 
-  // --- RENDU 2 : INTERFACE D'AUTHENTIFICATION PRIVY MALIGNE ---
-  if (view === 'login') {
-    return (
-      <div style={{ backgroundColor: bg, color: text, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>
-        <div style={{ backgroundColor: cardBg, border: `1px solid ${border}`, padding: '40px', borderRadius: '24px', maxWidth: '400px', width: '100%', textAlign: 'center', position: 'relative' }}>
-          <button onClick={() => setStep('email') & setView('landing')} style={{ position: 'absolute', top: '24px', left: '24px', background: 'transparent', border: 'none', color: secondaryText, cursor: 'pointer', fontSize: '13px' }}>← Cancel</button>
-          <div style={{ letterSpacing: '3px', textTransform: 'uppercase', fontWeight: '600', fontSize: '11px', color: secondaryText, marginBottom: '24px', marginTop: '12px' }}>Koppi Node</div>
-          <h2 style={{ fontSize: '28px', fontWeight: '600', marginBottom: '8px', letterSpacing: '-0.5px' }}>Sign In</h2>
-          <p style={{ color: secondaryText, fontSize: '14px', marginBottom: '32px' }}>Access secure stablecoin infrastructure.</p>
-          
-          {step === 'email' ? (
-            <div>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email address" style={{ width: '100%', height: '48px', background: isDarkMode ? '#000000' : '#F5F5F7', border: `1px solid ${border}`, borderRadius: '12px', padding: '0 16px', fontSize: '14px', color: text, textAlign: 'center', outline: 'none', marginBottom: '16px' }} />
-              <button onClick={handleSendCode} style={{ width: '100%', height: '48px', background: text, color: bg, fontWeight: '600', borderRadius: '24px', border: 'none', cursor: 'pointer', fontSize: '13px' }}>Continue</button>
-            </div>
-          ) : (
-            <div>
-              <input type="text" value={code} onChange={e => setCode(e.target.value)} placeholder="000000" maxLength="6" style={{ width: '100%', height: '48px', background: isDarkMode ? '#000000' : '#F5F5F7', border: `1px solid ${border}`, borderRadius: '12px', padding: '0 16px', fontSize: '18px', fontWeight: '600', letterSpacing: '4px', color: text, textAlign: 'center', outline: 'none', marginBottom: '16px' }} />
-              <button onClick={handleVerifyCode} style={{ width: '100%', height: '48px', background: text, color: bg, fontWeight: '600', borderRadius: '24px', border: 'none', cursor: 'pointer', fontSize: '13px' }}>Verify and Connect</button>
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  // --- RENDU 3 : DASHBOARD COMPLET INTÉGRAL (AUCUN CHANGEMENT STRUCTUREL) ---
+  // --- RENDU 3 : DASHBOARD INTERNE ---
   return (
     <div style={{ backgroundColor: bg, color: text, minHeight: '100vh', display: 'flex', transition: 'background-color 0.4s ease', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', WebkitFontSmoothing: 'antialiased' }}>
       <div style={{ width: '100%', display: 'flex', flexDirection: 'column', padding: '24px 0 0' }}>
         
-        {/* HEADER LIQUID GLASS DU DASHBOARD */}
         <div style={{ width: '100%', maxWidth: '1080px', margin: '0 auto', padding: '0 24px', position: 'sticky', top: '16px', zIndex: 100 }}>
           <header style={{ height: '54px', border: `1px solid ${glassNavbarBorder}`, backgroundColor: glassNavbarBg, backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)', borderRadius: '27px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', boxShadow: isDarkMode ? '0 12px 40px 0 rgba(0, 0, 0, 0.5)' : '0 12px 40px 0 rgba(0, 0, 0, 0.03)' }}>
             <div style={{ fontSize: '14px', fontWeight: '600', letterSpacing: '2px', color: text, cursor: 'pointer' }} onClick={() => setView('landing')}>KOPPI</div>
@@ -340,7 +321,7 @@ function KoppiApp() {
               ].map(t => {
                 const isSelected = vm.selectedTab === t.id && !selectedAssetDetail;
                 return (
-                  <button key={t.id} onClick={() => { setSelectedAssetDetail(null); vm.setSelectedTab(t.id); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', border: 'none', fontSize: '13px', fontWeight: isSelected ? '500' : '400', cursor: 'pointer', padding: '8px 18px', borderRadius: '20px', background: isSelected ? '#0A58CA' : 'transparent', color: isSelected ? '#FFFFFF' : secondaryText, boxShadow: isSelected ? '0 4px 14px 0 rgba(10, 88, 202, 0.4)' : 'none', transition: 'all 0.15s ease-in-out' }}><t.icon /> <span>{t.label}</span></button>
+                  <button key={t.id} onClick={() => { setSelectedAssetDetail(null); vm.setSelectedTab(t.id); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', border: 'none', fontSize: '13px', fontWeight: isSelected ? '500' : '400', cursor: 'pointer', padding: '8px 18px', borderRadius: '20px', background: isSelected ? '#0A58CA' : 'transparent', color: isSelected ? '#FFFFFF' : secondaryText, boxShadow: isSelected ? '0 4px 14px 0 rgba(10, 88, 202, 0.4), inset 0 1px 0 0 rgba(255, 255, 255, 0.2)' : 'none', transition: 'all 0.15s ease-in-out' }}><t.icon /> <span>{t.label}</span></button>
                 );
               })}
             </nav>
@@ -350,10 +331,11 @@ function KoppiApp() {
           </header>
         </div>
 
-        {/* PANNEAU CENTRAL PRINCIPAL APPLICATION */}
         <main style={{ flex: 1, padding: '70px 40px', margin: '0 auto', width: '100%', maxWidth: '1120px' }}>
+          
+          {/* 🌟 APPLIQUÉ : Animation fadeInUp fluide lors de l'affichage de la sous-page de détail */}
           {selectedAssetDetail ? (
-            <div style={{ maxWidth: '680px', margin: '0 auto' }}>
+            <div style={{ maxWidth: '680px', margin: '0 auto', animation: 'fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}>
               <button onClick={() => setSelectedAssetDetail(null)} style={{ background: 'none', border: 'none', color: secondaryText, fontSize: '13px', cursor: 'pointer', marginBottom: '32px' }}>✕ Close Detail</button>
               <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '20px', padding: '40px', textAlign: 'center', marginBottom: '32px' }}>
                 <h2 style={{ fontSize: '32px', fontWeight: '400', letterSpacing: '-1px', marginBottom: '6px' }}>{selectedAssetDetail.name}</h2>
@@ -366,7 +348,7 @@ function KoppiApp() {
           ) : (
             <>
               {vm.selectedTab === 0 && (
-                <div>
+                <div style={{ animation: 'fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px 0 60px', textAlign: 'center' }}>
                     <div style={{ fontSize: '46px', fontWeight: '300', letterSpacing: '-1.5px', fontFamily: '-apple-system, sans-serif', color: text, marginBottom: '24px' }}>{vm.totalBalanceCalculated.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{currencySymbol}</div>
                     <div style={{ display: 'flex', gap: '10px' }}><button style={{ height: '38px', padding: '0 22px', background: text, color: bg, fontWeight: '500', borderRadius: '19px', border: 'none', cursor: 'pointer', fontSize: '13px' }}>Add Money</button><button style={{ height: '38px', padding: '0 22px', background: isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)', color: text, fontWeight: '500', borderRadius: '19px', border: 'none', cursor: 'pointer', fontSize: '13px' }}>Transfer</button></div>
@@ -392,7 +374,7 @@ function KoppiApp() {
               )}
 
               {vm.selectedTab === 1 && (
-                <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+                <div style={{ maxWidth: '800px', margin: '0 auto', animation: 'fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}>
                   <h2 style={{ fontSize: '22px', fontWeight: '500', marginBottom: '24px', letterSpacing: '-0.5px' }}>Markets</h2>
                   <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '14px', padding: '0 16px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}><span style={{ color: secondaryText }}>🔍</span><input type="text" placeholder="Search tokens..." style={{ width: '100%', height: '44px', border: 'none', background: 'transparent', outline: 'none', color: text, fontSize: '14px' }} /></div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -404,14 +386,14 @@ function KoppiApp() {
               )}
 
               {vm.selectedTab === 2 && (
-                <div style={{ textAlign: 'center', padding: '100px 0', maxWidth: '400px', margin: '0 auto' }}>
+                <div style={{ textAlign: 'center', padding: '100px 0', maxWidth: '400px', margin: '0 auto', animation: 'fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}>
                   <h2 style={{ fontSize: '20px', fontWeight: '500', marginBottom: '8px' }}>Vault Security</h2>
                   <p style={{ color: secondaryText, fontSize: '14px', lineHeight: '1.5' }}>Your asset lockers are operating under end-to-end multi-party encryption layers.</p>
                 </div>
               )}
 
               {vm.selectedTab === 3 && (
-                <div style={{ maxWidth: '500px', margin: '0 auto' }}>
+                <div style={{ maxWidth: '500px', margin: '0 auto', animation: 'fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}>
                   <h2 style={{ fontSize: '22px', fontWeight: '500', marginBottom: '24px', letterSpacing: '-0.5px' }}>Settings</h2>
                   <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '20px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
                     <div>
@@ -431,6 +413,12 @@ function KoppiApp() {
           )}
         </main>
       </div>
+      <style>{`
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(16px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 }
