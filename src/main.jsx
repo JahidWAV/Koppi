@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import ReactDOM from 'react-dom/client';
 import { PrivyProvider, usePrivy, useLoginWithEmail } from '@privy-io/react-auth';
-import Logo from './logo.svg';
-import LogoWhite from './logo-white.svg';
 
 // 🌟 BLOCAGE ABSOLU DU FLASH BLANC : Forçage du fond noir au niveau du DOM racine
+// S'exécute immédiatement dès le chargement du bundle avant l'initialisation de React
 if (typeof document !== 'undefined') {
   const injectStaticStyle = () => {
     let styleTag = document.getElementById('koppi-core-bg');
@@ -221,7 +220,7 @@ function KoppiApp() {
   if (!ready) {
     return (
       <div style={{ backgroundColor: "#000000", color: "#F5F5F7", minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: '-apple-system, sans-serif' }}>
-        <img src={LogoWhite} alt="Koppi" style={{ height: '40px', animation: 'pulse 1.8s infinite ease-in-out' }} />
+        <div style={{ letterSpacing: '4px', textTransform: 'uppercase', fontWeight: '400', fontSize: '20px', animation: 'pulse 1.8s infinite ease-in-out' }}>KOPPI</div>
         <style>{`@keyframes pulse { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }`}</style>
       </div>
     );
@@ -233,7 +232,7 @@ function KoppiApp() {
       <div style={{ backgroundColor: bg, color: text, minHeight: '100vh', display: 'flex', flexDirection: 'column', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', WebkitFontSmoothing: 'antialiased' }}>
         <div style={{ width: '100%', maxWidth: '1080px', margin: '0 auto', padding: '0 24px', position: 'sticky', top: '16px', zIndex: 100 }}>
           <header style={{ height: '54px', border: `1px solid ${glassNavbarBorder}`, backgroundColor: glassNavbarBg, backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)', borderRadius: '27px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', boxShadow: '0 12px 40px 0 rgba(0, 0, 0, 0.5)' }}>
-            <img src={LogoWhite} alt="Koppi" style={{ height: '18px', cursor: 'pointer' }} onClick={() => setView('landing')} />
+            <div style={{ fontSize: '14px', fontWeight: '600', letterSpacing: '2px', cursor: 'pointer' }} onClick={() => setView('landing')}>KOPPI</div>
             <nav style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
               <span style={{ fontSize: '13px', color: text, fontWeight: '500', cursor: 'pointer' }}>Infrastructure</span>
               <span style={{ fontSize: '13px', color: secondaryText, cursor: 'pointer' }}>Security</span>
@@ -299,7 +298,7 @@ function KoppiApp() {
             ✕ Back to Terminal
           </button>
           
-          <img src={LogoWhite} alt="Koppi" style={{ height: '32px', marginBottom: '24px', margin: '0 auto' }} />
+          <div style={{ letterSpacing: '4px', textTransform: 'uppercase', fontWeight: '400', fontSize: '14px', color: '#8E8E93', marginBottom: '12px' }}>KOPPI NODE</div>
           <h2 style={{ fontSize: '32px', fontWeight: '300', marginBottom: '8px', letterSpacing: '-1px', color: '#F5F5F7' }}>Access Gate</h2>
           <p style={{ color: '#8E8E93', fontSize: '13px', marginBottom: '36px', lineHeight: '1.4' }}>Connect your decentralized parameters to secure stablecoin infrastructure.</p>
           
@@ -332,7 +331,7 @@ function KoppiApp() {
         
         <div style={{ width: '100%', maxWidth: '1080px', margin: '0 auto', padding: '0 24px', position: 'sticky', top: '16px', zIndex: 100 }}>
           <header style={{ height: '54px', border: `1px solid ${glassNavbarBorder}`, backgroundColor: glassNavbarBg, backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)', borderRadius: '27px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', boxShadow: isDarkMode ? '0 12px 40px 0 rgba(0, 0, 0, 0.5)' : '0 12px 40px 0 rgba(0, 0, 0, 0.03)' }}>
-            <img src={isDarkMode ? LogoWhite : Logo} alt="Koppi" style={{ height: '18px', cursor: 'pointer' }} onClick={() => setView('landing')} />
+            <div style={{ fontSize: '14px', fontWeight: '600', letterSpacing: '2px', color: text, cursor: 'pointer' }} onClick={() => setView('landing')}>KOPPI</div>
             <nav style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
               {[
                 { id: 0, label: "Overview", icon: Icons.Overview },
