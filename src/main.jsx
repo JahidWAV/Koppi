@@ -2,6 +2,26 @@ import React, { useState, useEffect, useMemo } from 'react';
 import ReactDOM from 'react-dom/client';
 import { PrivyProvider, usePrivy, useLoginWithEmail } from '@privy-io/react-auth';
 
+// 🌟 BLOCAGE ABSOLU DU FLASH BLANC : Forçage du fond noir au niveau du DOM racine
+// S'exécute immédiatement dès le chargement du bundle avant l'initialisation de React
+if (typeof document !== 'undefined') {
+  const injectStaticStyle = () => {
+    let styleTag = document.getElementById('koppi-core-bg');
+    if (!styleTag) {
+      styleTag = document.createElement('style');
+      styleTag.id = 'koppi-core-bg';
+      styleTag.innerHTML = `
+        html, body, #root { 
+          background-color: #000000 !important; 
+          color: #F5F5F7 !important;
+        }
+      `;
+      document.head.appendChild(styleTag);
+    }
+  };
+  injectStaticStyle();
+}
+
 const PRIVY_APP_ID = "cmqollwmd000s0cky0evrjnkd";
 
 // --- ICÔNES SVG NATIVES (STYLE APPLE FINE LINE) ---
@@ -190,7 +210,7 @@ function KoppiApp() {
 
   const handleVerifyCode = async () => {
     if (code.trim().length !== 6) return;
-    try { await loginWithCode({ code: code.trim() }); setView('app'); } catch(e){}
+    try { await loginWithCode({ code: code.trim() }); } catch(e){}
   };
 
   const handleLogout = async () => {
@@ -249,7 +269,7 @@ function KoppiApp() {
             ))}
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', width: '100%' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr 1fr', gap: '20px', width: '100%' }}>
             <div style={{ background: cardBg, border: `1px solid ${border}`, padding: '28px', borderRadius: '18px' }}>
               <div style={{ fontSize: '18px', marginBottom: '12px' }}>⚡ Base Network</div>
               <div style={{ fontSize: '13px', color: secondaryText, lineHeight: '1.4' }}>Optimized on Base layer-2 architecture for immediate validation cycles and near-zero fees.</div>
@@ -332,8 +352,6 @@ function KoppiApp() {
         </div>
 
         <main style={{ flex: 1, padding: '70px 40px', margin: '0 auto', width: '100%', maxWidth: '1120px' }}>
-          
-          {/* 🌟 APPLIQUÉ : Animation fadeInUp fluide lors de l'affichage de la sous-page de détail */}
           {selectedAssetDetail ? (
             <div style={{ maxWidth: '680px', margin: '0 auto', animation: 'fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}>
               <button onClick={() => setSelectedAssetDetail(null)} style={{ background: 'none', border: 'none', color: secondaryText, fontSize: '13px', cursor: 'pointer', marginBottom: '32px' }}>✕ Close Detail</button>
