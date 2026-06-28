@@ -31,11 +31,6 @@ const Icons = {
       <circle cx="12" cy="12" r="3" />
       <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1-1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
     </svg>
-  ),
-  Chevron: () => (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <polyline points="9 18 15 12 9 6" />
-    </svg>
   )
 };
 
@@ -60,8 +55,8 @@ function useWalletViewModel() {
     if (!authenticated || !walletAddress) return;
 
     const fetchBlockchainBalance = async () => {
-      const rpcNodeUrl = "https://sepolia.base.org";[cite: 2]
-      const usdcContract = "0xD733D48f2a7F57D4559F98ae07f87Dab595E3523";[cite: 2]
+      const rpcNodeUrl = "https://sepolia.base.org"; 
+      const usdcContract = "0xD733D48f2a7F57D4559F98ae07f87Dab595E3523"; 
       
       const cleanAddress = walletAddress.replace("0x", "").toLowerCase();
       const paddedAddress = cleanAddress.padStart(64, "0");
@@ -73,8 +68,8 @@ function useWalletViewModel() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             jsonrpc: "2.0",
-            method: "eth_call",[cite: 2]
-            params: [{ to: usdcContract, data: dataParam }, "latest"],[cite: 2]
+            method: "eth_call", 
+            params: [{ to: usdcContract, data: dataParam }, "latest"], 
             id: 1
           })
         });
@@ -83,7 +78,7 @@ function useWalletViewModel() {
         if (json.result && json.result !== "0x") {
           const hexValue = json.result.replace("0x", "");
           const rawValue = BigInt("0x" + hexValue);
-          const formattedBalance = Number(rawValue) / Math.pow(10, 18);[cite: 2]
+          const formattedBalance = Number(rawValue) / Math.pow(10, 18); 
           setUsdcBalance(formattedBalance);
         }
       } catch (error) {
@@ -139,7 +134,7 @@ function useWalletViewModel() {
       { id: "ethereum", name: "Ethereum", ticker: "ETH", color: "#627EEA", balance: 0.0 },
       { id: "tether", name: "Tether", ticker: "USDT", color: "#26A17B", balance: 0.0 },
       { id: "binancecoin", name: "BNB", ticker: "BNB", color: "#F3BA2F", balance: 0.0 },
-      { id: "usd-coin", name: "USDC", ticker: "USDC", color: "#2775CA", balance: usdcBalance },[cite: 2]
+      { id: "usd-coin", name: "USDC", ticker: "USDC", color: "#2775CA", balance: usdcBalance }, 
       { id: "ripple", name: "XRP", ticker: "XRP", color: "#23292F", balance: 0.0 },
       { id: "solana", name: "Solana", ticker: "SOL", color: "#14F195", balance: 0.0 },
       { id: "tron", name: "TRON", ticker: "TRX", color: "#EC0928", balance: 0.0 },
@@ -173,7 +168,7 @@ function KoppiApp() {
   const [code, setCode] = useState('');
   const [step, setStep] = useState('email');
 
-  // État logique pour mémoriser l'asset cliqué pour la sous-page de détail[cite: 1]
+  // Sous-page : Objet d'actif mémorisé
   const [selectedAssetDetail, setSelectedAssetDetail] = useState(null);
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
@@ -193,7 +188,7 @@ function KoppiApp() {
   const border = isDarkMode ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.06)";
   const secondaryText = isDarkMode ? "#8E8E93" : "#86868B";
 
-  // 🌟 FILTRAGE DE L'OVERVIEW : Seuls les assets acquis (> 0) sont mémorisés[cite: 1]
+  // Filtrage exclusif des tokens possédés
   const acquiredAssets = useMemo(() => {
     return vm.assets.filter(asset => asset.realBalance > 0);
   }, [vm.assets]);
@@ -228,7 +223,7 @@ function KoppiApp() {
           
           {step === 'email' ? (
             <div>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email address" style={{ width: '100%', height: '48px', background: isDarkMode ? '#000000' : '#F5F5F7', border: `1px solid ${border}`, borderRadius: '12px', padding: '0 16px', fontSize: '14px', color: text, textAlign: 'center', outline: 'none', marginBottom: '16px' }} />
+              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email address" style={{ width: '100%', height: '48px', background: isDarkMode ? '#000000' : '#F5F5F7', border: `1px solid ${border}`, borderRadius: '12px', padding: '0 16px', fontSize: '14px', color: text, textAlign: 'center', outline: 'none', marginBottom: '16px', transition: 'border-color 0.2s' }} />
               <button onClick={handleSendCode} style={{ width: '100%', height: '48px', background: text, color: bg, fontWeight: '600', borderRadius: '24px', border: 'none', cursor: 'pointer', fontSize: '13px' }}>Continue</button>
             </div>
           ) : (
@@ -249,12 +244,12 @@ function KoppiApp() {
       <aside style={{ width: sidebarCollapsed ? '80px' : '260px', borderRight: `1px solid ${border}`, display: 'flex', flexDirection: 'column', padding: '32px 16px', backgroundColor: cardBg, transition: 'width 0.3s cubic-bezier(0.25, 1, 0.5, 1)' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: sidebarCollapsed ? 'center' : 'space-between', marginBottom: '40px', padding: '0 12px' }}>
           {!sidebarCollapsed && <div style={{ fontSize: '18px', fontWeight: '600', letterSpacing: '3px' }}>KOPPI</div>}
-          <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)} style={{ background: 'none', border: 'none', fontSize: '16px', color: secondaryText, cursor: 'pointer', padding: '4px' }}>
+          <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)} style={{ background: 'none', border: 'none', fontSize: '16px', color: secondaryText, cursor: 'pointer', padding: '4px' }} title={sidebarCollapsed ? "Expand menu" : "Collapse menu"}>
             {sidebarCollapsed ? "→" : "←"}
           </button>
         </div>
         
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>
+        <nav style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: 1 }}>
           {[
             { id: 0, label: "Overview", icon: Icons.Overview },
             { id: 1, label: "Markets", icon: Icons.Markets },
@@ -275,22 +270,21 @@ function KoppiApp() {
         </div>
       </aside>
 
-      {/* --- PANNEAU CENTRAL --- */}
+      {/* --- ESPACE CENTRAL --- */}
       <main style={{ flex: 1, padding: '54px 64px', overflowY: 'auto', maxHeight: '100vh' }}>
         
-        {/* 🌟 SOUS-PAGE DE DÉTAIL D'UN ASSET (DÉPLOIEMENT UNIQUE STYLE APPLE)[cite: 1] */}
+        {/* SOUS-PAGE DE DÉTAIL CONTEXTUELLE SÉCURISÉE */}
         {selectedAssetDetail ? (
           <div style={{ maxWidth: '680px', margin: '0 auto' }}>
-            <button onClick={() => setSelectedAssetDetail(null)} style={{ background: 'none', border: 'none', color: secondaryText, fontSize: '13px', cursor: 'pointer', marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              ← Back
+            <button onClick={() => setSelectedAssetDetail(null)} style={{ background: 'none', border: 'none', color: secondaryText, fontSize: '13px', cursor: 'pointer', marginBottom: '32px', display: 'flex', alignItems: 'center' }}>
+              ✕ Close Detail
             </button>
             
             <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '20px', padding: '40px', textAlign: 'center', marginBottom: '32px' }}>
-              <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: selectedAssetDetail.color, margin: '0 auto 16px' }} />
               <h2 style={{ fontSize: '32px', fontWeight: '400', letterSpacing: '-1px', marginBottom: '6px' }}>{selectedAssetDetail.name}</h2>
-              <div style={{ fontSize: '14px', color: secondaryText, fontFamily: 'monospace', marginBottom: '32px' }}>{selectedAssetDetail.ticker} Network Node</div>
+              <div style={{ fontSize: '14px', color: secondaryText, fontFamily: 'monospace', marginBottom: '32px' }}>{selectedAssetDetail.ticker} Assets</div>
               
-              <div style={{ fontSize: '48px', fontWeight: '300', letterSpacing: '-1.5px', marginBottom: '8px' }}>
+              <div style={{ fontSize: '42px', fontWeight: '300', letterSpacing: '-1.5px', marginBottom: '8px' }}>
                 {selectedAssetDetail.ticker === 'USDC' ? selectedAssetDetail.realBalance.toFixed(2) : selectedAssetDetail.realBalance} <span style={{ fontSize: '20px', color: secondaryText }}>{selectedAssetDetail.ticker}</span>
               </div>
               
@@ -299,32 +293,19 @@ function KoppiApp() {
               </div>
 
               <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
-                <button style={{ height: '40px', padding: '0 24px', background: text, color: bg, fontWeight: '500', borderRadius: '20px', border: 'none', cursor: 'pointer', fontSize: '13px' }}>Buy {selectedAssetDetail.ticker}</button>
+                <button style={{ height: '40px', padding: '0 24px', background: text, color: bg, fontWeight: '500', borderRadius: '20px', border: 'none', cursor: 'pointer', fontSize: '13px' }}>Buy</button>
                 <button style={{ height: '40px', padding: '0 24px', background: 'transparent', color: text, fontWeight: '500', borderRadius: '20px', border: `1px solid ${border}`, cursor: 'pointer', fontSize: '13px' }}>Send</button>
-              </div>
-            </div>
-
-            <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '20px', padding: '24px' }}>
-              <div style={{ fontSize: '13px', color: secondaryText, display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                <span>Market Price (USD)</span>
-                <span style={{ fontFamily: 'monospace', color: text }}>${selectedAssetDetail.priceUSD.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
-              </div>
-              <div style={{ fontSize: '13px', color: secondaryText, display: 'flex', justifyContent: 'space-between' }}>
-                <span>24h Change</span>
-                <span style={{ color: selectedAssetDetail.change24h >= 0 ? '#10B981' : '#EF4444', fontWeight: '500' }}>
-                  {selectedAssetDetail.change24h >= 0 ? '+' : ''}{selectedAssetDetail.change24h.toFixed(2)}%
-                </span>
               </div>
             </div>
           </div>
         ) : (
           <>
-            {/* TAB 0 : GENERAL OVERVIEW */}
+            {/* TAB 0 : OVERVIEW CONTENANT LES ASSETS FILTRÉS */}
             {vm.selectedTab === 0 && (
               <div style={{ maxWidth: '1040px', margin: '0 auto' }}>
                 <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '48px' }}>
                   <div>
-                    <h1 style={{ fontSize: '26px', fontWeight: '500', letterSpacing: '-0.5px', marginBottom: '4px' }}>Overview</h1>
+                    <h1 style={{ fontSize: '28px', fontWeight: '500', letterSpacing: '-0.5px', marginBottom: '4px' }}>Account Overview</h1>
                     <p style={{ color: secondaryText, fontSize: '14px' }}>Base Sepolia Environment</p>
                   </div>
                   <div style={{ fontSize: '12px', color: secondaryText, fontFamily: 'monospace', background: cardBg, padding: '6px 14px', borderRadius: '20px', border: `1px solid ${border}` }}>
@@ -340,8 +321,8 @@ function KoppiApp() {
                     </div>
                   </div>
                   <div style={{ display: 'flex', gap: '12px' }}>
-                    <button style={{ height: '36px', padding: '0 16px', background: text, color: bg, fontWeight: '500', borderRadius: '18px', border: 'none', cursor: 'pointer', fontSize: '12px' }}>Add Money</button>
-                    <button style={{ height: '36px', padding: '0 16px', background: 'transparent', color: text, fontWeight: '500', borderRadius: '18px', border: `1px solid ${border}`, cursor: 'pointer', fontSize: '12px' }}>Transfer</button>
+                    <button style={{ height: '40px', padding: '0 20px', background: text, color: bg, fontWeight: '500', borderRadius: '20px', border: 'none', cursor: 'pointer', fontSize: '12px' }}>Add Money</button>
+                    <button style={{ height: '40px', padding: '0 20px', background: 'transparent', color: text, fontWeight: '500', borderRadius: '20px', border: `1px solid ${border}`, cursor: 'pointer', fontSize: '12px' }}>Transfer</button>
                   </div>
                 </div>
 
@@ -349,14 +330,14 @@ function KoppiApp() {
                   <div>
                     <h3 style={{ fontSize: '14px', fontWeight: '500', color: secondaryText, marginBottom: '16px' }}>Assets</h3>
                     <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '20px', overflow: 'hidden' }}>
-                      {/* 🌟 AFFICHAGE EXCLUSIF DES ACTIFS ACQUIS VIA NOTRE HOOK DE FILTRAGE[cite: 1] */}
+                      {/* Affichage exclusif des tokens possédés */}
                       {acquiredAssets.length === 0 ? (
                         <div style={{ padding: '32px', textAlign: 'center', color: secondaryText, fontSize: '13px' }}>
-                          Your wallet is empty. Stablecoin balances will appear here node active.
+                          No stablecoin balances found on this active node.
                         </div>
                       ) : (
                         acquiredAssets.map((asset, i) => (
-                          <div key={asset.id} onClick={() => setSelectedAssetDetail(asset)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: i < acquiredAssets.length - 1 ? `1px solid ${border}` : 'none', cursor: 'pointer', transition: 'background 0.2s' }}>
+                          <div key={asset.id} onClick={() => setSelectedAssetDetail(asset)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: i < acquiredAssets.length - 1 ? `1px solid ${border}` : 'none', cursor: 'pointer' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
                               <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: asset.color }} />
                               <div>
@@ -366,12 +347,9 @@ function KoppiApp() {
                                 </div>
                               </div>
                             </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                              <div style={{ textAlign: 'right' }}>
-                                <div style={{ fontWeight: '500', fontSize: '14px' }}>{vm.currentCurrency.includes("EUR") ? (asset.priceEUR * asset.realBalance).toFixed(2) + '€' : (asset.priceUSD * asset.realBalance).toFixed(2) + '$'}</div>
-                                <div style={{ fontSize: '11px', color: asset.change24h >= 0 ? '#10B981' : '#EF4444' }}>{asset.change24h >= 0 ? '+' : ''}{asset.change24h.toFixed(2)}%</div>
-                              </div>
-                              <span style={{ color: secondaryText, display: 'flex', alignItems: 'center' }}><Icons.Chevron /></span>
+                            <div style={{ textAlign: 'right' }}>
+                              <div style={{ fontWeight: '500', fontSize: '14px' }}>{vm.currentCurrency.includes("EUR") ? (asset.priceEUR * asset.realBalance).toFixed(2) + '€' : (asset.priceUSD * asset.realBalance).toFixed(2) + '$'}</div>
+                              <div style={{ fontSize: '11px', color: asset.change24h >= 0 ? '#10B981' : '#EF4444' }}>{asset.change24h >= 0 ? '+' : ''}{asset.change24h.toFixed(2)}%</div>
                             </div>
                           </div>
                         ))
@@ -389,7 +367,7 @@ function KoppiApp() {
               </div>
             )}
 
-            {/* TAB 1 : MARKETS SELECTION */}
+            {/* TAB 1 : MARKETS */}
             {vm.selectedTab === 1 && (
               <div style={{ maxWidth: '800px', margin: '0 auto' }}>
                 <h2 style={{ fontSize: '22px', fontWeight: '500', marginBottom: '24px', letterSpacing: '-0.5px' }}>Markets</h2>
@@ -399,19 +377,16 @@ function KoppiApp() {
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   {vm.assets.map(asset => (
-                    <div key={asset.id} onClick={() => setSelectedAssetDetail(asset)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 20px', background: cardBg, border: `1px solid ${border}`, borderRadius: '14px', cursor: 'pointer', transition: 'background 0.2s' }}>
+                    <div key={asset.id} onClick={() => setSelectedAssetDetail(asset)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 20px', background: cardBg, border: `1px solid ${border}`, borderRadius: '14px', cursor: 'pointer' }}>
                       <div style={{ fontWeight: '500', fontSize: '14px' }}>{asset.ticker} <span style={{ fontWeight: '400', color: secondaryText, marginLeft: '6px', fontSize: '13px' }}>{asset.name}</span></div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                        <div style={{ fontWeight: '400', fontSize: '14px', fontFamily: 'monospace' }}>{asset.priceUSD.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</div>
-                        <span style={{ color: secondaryText, display: 'flex', alignItems: 'center' }}><Icons.Chevron /></span>
-                      </div>
+                      <div style={{ fontWeight: '400', fontSize: '14px', fontFamily: 'monospace' }}>{asset.priceUSD.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</div>
                     </div>
                   ))}
                 </div>
               </div>
             )}
 
-            {/* TAB 2 : VAULT SECURE LOCKERS */}
+            {/* TAB 2 : VAULT */}
             {vm.selectedTab === 2 && (
               <div style={{ textAlign: 'center', padding: '100px 0', maxWidth: '400px', margin: '0 auto' }}>
                 <h2 style={{ fontSize: '20px', fontWeight: '500', marginBottom: '8px' }}>Vault Security</h2>
@@ -419,11 +394,11 @@ function KoppiApp() {
               </div>
             )}
 
-            {/* TAB 3 : APPLICATION PREFERENCES */}
+            {/* TAB 3 : SETTINGS */}
             {vm.selectedTab === 3 && (
               <div style={{ maxWidth: '500px', margin: '0 auto' }}>
                 <h2 style={{ fontSize: '22px', fontWeight: '500', marginBottom: '24px', letterSpacing: '-0.5px' }}>Settings</h2>
-                <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '16px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '20px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
                   <div>
                     <label style={{ fontSize: '11px', color: secondaryText, fontWeight: '500', textTransform: 'uppercase', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>Interface Theme</label>
                     <select value={vm.currentTheme} onChange={e => vm.setCurrentTheme(e.target.value)} style={{ width: '100%', height: '40px', background: bg, border: `1px solid ${border}`, borderRadius: '10px', padding: '0 10px', color: text, outline: 'none', fontSize: '13px' }}>
