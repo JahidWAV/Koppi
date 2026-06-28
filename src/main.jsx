@@ -29,7 +29,7 @@ const Icons = {
   Settings: () => (
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="3" />
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1-1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1-2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1-2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1-1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1-2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
     </svg>
   )
 };
@@ -178,6 +178,15 @@ function KoppiApp() {
   const border = isDarkMode ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.06)";
   const secondaryText = isDarkMode ? "#8E8E93" : "#86868B";
 
+  // Configuration couleur pour l'effet Liquid Glass d'après image_eb213e.png
+  const glassNavbarBg = isDarkMode ? "rgba(34, 39, 46, 0.75)" : "rgba(255, 255, 255, 0.75)";
+  const glassNavbarBorder = isDarkMode ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.08)";
+
+  useEffect(() => {
+    document.body.style.backgroundColor = bg;
+    document.documentElement.style.backgroundColor = bg;
+  }, [bg]);
+
   const acquiredAssets = useMemo(() => {
     return vm.assets.filter(asset => asset.realBalance > 0);
   }, [vm.assets]);
@@ -202,7 +211,6 @@ function KoppiApp() {
     }
   };
 
-  // 🌟 CHARGEMENT FLUIDE STYLE IOS (Splash screen)
   if (!ready) {
     return (
       <div style={{ backgroundColor: bg, color: text, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: '-apple-system, sans-serif' }}>
@@ -247,34 +255,76 @@ function KoppiApp() {
   return (
     <div style={{ backgroundColor: bg, color: text, minHeight: '100vh', display: 'flex', transition: 'background-color 0.4s ease', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', WebkitFontSmoothing: 'antialiased' }}>
       
-      {/* --- MENU SUPERIEUR HORIZONTAL SANS BARRE LATERALE --- */}
-      <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
-        <header style={{ height: '64px', borderBottom: `1px solid ${border}`, backgroundColor: cardBg, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 40px', position: 'sticky', top: 0, zIndex: 10 }}>
-          <div style={{ fontSize: '16px', fontWeight: '600', letterSpacing: '3px', color: text }}>KOPPI</div>
-          
-          <nav style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
-            {[
-              { id: 0, label: "Overview", icon: Icons.Overview },
-              { id: 1, label: "Markets", icon: Icons.Markets },
-              { id: 2, label: "Vault", icon: Icons.Vault },
-              { id: 3, label: "Settings", icon: Icons.Settings }
-            ].map(t => {
-              const isSelected = vm.selectedTab === t.id && !selectedAssetDetail;
-              return (
-                <button key={t.id} onClick={() => { setSelectedAssetDetail(null); vm.setSelectedTab(t.id); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'transparent', border: 'none', color: isSelected ? text : secondaryText, fontSize: '13px', fontWeight: isSelected ? '500' : '400', cursor: 'pointer', padding: '6px 12px', borderRadius: '8px', transition: 'color 0.15s' }}>
-                  <t.icon /> <span>{t.label}</span>
-                </button>
-              );
-            })}
-          </nav>
+      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', padding: '24px 0 0' }}>
+        
+        {/* 🌟 CONTAINER DU LIQUID GLASS HEADER HORIZONTAL (FIDÈLE À image_eb213e.png) */}
+        <div style={{ width: '100%', maxWidth: '1080px', margin: '0 auto', padding: '0 24px', position: 'sticky', top: '16px', zIndex: 100 }}>
+          <header style={{ 
+            height: '56px', 
+            border: `1px solid ${glassNavbarBorder}`, 
+            backgroundColor: glassNavbarBg, 
+            backdropFilter: 'blur(24px)', 
+            WebkitBackdropFilter: 'blur(24px)',
+            borderRadius: '28px', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'space-between', 
+            padding: '0 24px',
+            boxShadow: isDarkMode ? '0 8px 32px 0 rgba(0, 0, 0, 0.37), inset 0 1px 1px 0 rgba(255, 255, 255, 0.05)' : '0 8px 32px 0 rgba(31, 38, 135, 0.05)'
+          }}>
+            <div style={{ fontSize: '15px', fontWeight: '600', letterSpacing: '2px', color: text, paddingLeft: '8px' }}>KOPPI</div>
+            
+            <nav style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+              {[
+                { id: 0, label: "Overview", icon: Icons.Overview },
+                { id: 1, label: "Markets", icon: Icons.Markets },
+                { id: 2, label: "Vault", icon: Icons.Vault },
+                { id: 3, label: "Settings", icon: Icons.Settings }
+              ].map(t => {
+                const isSelected = vm.selectedTab === t.id && !selectedAssetDetail;
+                return (
+                  <button 
+                    key={t.id} 
+                    onClick={() => { setSelectedAssetDetail(null); vm.setSelectedTab(t.id); }} 
+                    style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '8px', 
+                      border: 'none', 
+                      fontSize: '13px', 
+                      fontWeight: isSelected ? '500' : '400', 
+                      cursor: 'pointer', 
+                      padding: '7px 18px', 
+                      borderRadius: '20px', 
+                      // 🌟 RENDU BUTTON FLUID GLASS AVEC HALO LUMINEUX BLEU NÉON ISSU DE TON CAPTURE D'ÉCRAN
+                      background: isSelected ? 'linear-gradient(135deg, #0d1527 0%, #052952 100%)' : 'transparent',
+                      color: isSelected ? '#FFFFFF' : secondaryText, 
+                      boxShadow: isSelected ? '0 0 16px 2px rgba(13, 110, 253, 0.45), inset 0 1px 0 rgba(255,255,255,0.1)' : 'none',
+                      transition: 'all 0.2s ease-in-out'
+                    }}
+                  >
+                    <t.icon /> <span>{t.label}</span>
+                  </button>
+                );
+              })}
+            </nav>
 
-          <div style={{ fontSize: '12px', color: secondaryText, fontFamily: 'monospace', background: bg, padding: '5px 12px', borderRadius: '14px', border: `1px solid ${border}` }}>
-            {user?.wallet?.address ? user.wallet.address.substring(0,6) + '...' + user.wallet.address.substring(user.wallet.address.length - 4) : "0x00...0000"}
-          </div>
-        </header>
+            <div style={{ 
+              fontSize: '12px', 
+              color: text, 
+              fontFamily: 'monospace', 
+              background: 'transparent', 
+              padding: '6px 16px', 
+              borderRadius: '16px', 
+              border: isDarkMode ? '1px solid rgba(255,255,255,0.15)' : '1px solid rgba(0,0,0,0.15)' 
+            }}>
+              {user?.wallet?.address ? user.wallet.address.substring(0,6) + '...' + user.wallet.address.substring(user.wallet.address.length - 4) : "0x00...0000"}
+            </div>
+          </header>
+        </div>
 
-        {/* --- ZONE CENTRALE PRINCIPALE EN PLEINE LARGEUR --- */}
-        <main style={{ flex: 1, padding: '60px 40px', margin: '0 auto', width: '100%', maxWidth: '1120px' }}>
+        {/* --- ZONE CENTRALE PRINCIPALE --- */}
+        <main style={{ flex: 1, padding: '70px 40px', margin: '0 auto', width: '100%', maxWidth: '1120px' }}>
           
           {selectedAssetDetail ? (
             <div style={{ maxWidth: '680px', margin: '0 auto' }}>
@@ -302,10 +352,9 @@ function KoppiApp() {
             </div>
           ) : (
             <>
-              {/* TAB 0 : GENERAL PORTFOLIO AVEC INTERFACE ÉPURÉE ET ALIGNEMENT VERTICAL CENTRÉ */}
+              {/* TAB 0 : GENERAL PORTFOLIO */}
               {vm.selectedTab === 0 && (
                 <div>
-                  {/* Cadre de solde principal entièrement centré */}
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px 0 60px', textAlign: 'center' }}>
                     <div style={{ fontSize: '46px', fontWeight: '300', letterSpacing: '-1.5px', fontFamily: '-apple-system, sans-serif', color: text, marginBottom: '24px' }}>
                       {vm.totalBalanceCalculated.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{currencySymbol}
@@ -317,7 +366,6 @@ function KoppiApp() {
                     </div>
                   </div>
 
-                  {/* Grille d'affichage inférieure */}
                   <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: '48px' }}>
                     <div>
                       <h3 style={{ fontSize: '14px', fontWeight: '500', color: secondaryText, marginBottom: '16px' }}>Assets</h3>
