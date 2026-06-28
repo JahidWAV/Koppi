@@ -7,14 +7,14 @@ const PRIVY_APP_ID = "cmqollwmd000s0cky0evrjnkd";
 // --- ICÔNES SVG NATIVES (STYLE APPLE FINE LINE) ---
 const Icons = {
   Overview: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <path d="M20 12V8H4v10a2 2 0 0 0 2 2h14v-4" />
       <path d="M16 12h5a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-5a2 2 0 0 1-2-2v0a2 2 0 0 1 2-2z" />
       <path d="M4 8V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2" />
     </svg>
   ),
   Markets: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="11" cy="11" r="8" />
       <line x1="21" y1="21" x2="16.65" y2="16.65" />
     </svg>
@@ -27,7 +27,7 @@ const Icons = {
     </svg>
   ),
   Settings: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="3" />
       <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1-1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1-2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1-2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
     </svg>
@@ -167,16 +167,7 @@ function KoppiApp() {
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [step, setStep] = useState('email');
-
   const [selectedAssetDetail, setSelectedAssetDetail] = useState(null);
-
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
-    return localStorage.getItem("sidebar_collapsed") === "true";
-  });
-
-  useEffect(() => {
-    localStorage.setItem("sidebar_collapsed", sidebarCollapsed);
-  }, [sidebarCollapsed]);
 
   const isDarkMode = vm.currentTheme === "Dark";
   const currencySymbol = vm.currentCurrency.includes("EUR") ? "€" : "$";
@@ -186,12 +177,6 @@ function KoppiApp() {
   const cardBg = isDarkMode ? "#1C1C1E" : "#FFFFFF";
   const border = isDarkMode ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.06)";
   const secondaryText = isDarkMode ? "#8E8E93" : "#86868B";
-
-  // Injection immédiate d'une règle CSS pour forcer le body à hériter du fond sombre (Élimine le flash blanc initial)
-  useEffect(() => {
-    document.body.style.backgroundColor = bg;
-    document.documentElement.style.backgroundColor = bg;
-  }, [bg]);
 
   const acquiredAssets = useMemo(() => {
     return vm.assets.filter(asset => asset.realBalance > 0);
@@ -217,15 +202,14 @@ function KoppiApp() {
     }
   };
 
-  // 🌟 PROTECTION SPLASH-SCREEN ANTI-EPILEPTIQUE DIRECTE
+  // 🌟 CHARGEMENT FLUIDE STYLE IOS (Splash screen)
   if (!ready) {
     return (
-      <div style={{ backgroundColor: "#000000", color: "#F5F5F7", minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: '-apple-system, sans-serif' }}>
+      <div style={{ backgroundColor: bg, color: text, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: '-apple-system, sans-serif' }}>
         <div style={{ letterSpacing: '4px', textTransform: 'uppercase', fontWeight: '400', fontSize: '20px', animation: 'pulse 1.8s infinite ease-in-out' }}>
           KOPPI
         </div>
         <style>{`
-          body { background-color: #000000 !important; }
           @keyframes pulse {
             0% { opacity: 0.3; transform: scale(0.98); }
             50% { opacity: 1; transform: scale(1); }
@@ -246,7 +230,7 @@ function KoppiApp() {
           
           {step === 'email' ? (
             <div>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email address" style={{ width: '100%', height: '48px', background: isDarkMode ? '#000000' : '#F5F5F7', border: `1px solid ${border}`, borderRadius: '12px', padding: '0 16px', fontSize: '14px', color: text, textAlign: 'center', outline: 'none', marginBottom: '16px' }} />
+              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email address" style={{ width: '100%', height: '48px', background: isDarkMode ? '#000000' : '#F5F5F7', border: `1px solid ${border}`, borderRadius: '12px', padding: '0 16px', fontSize: '14px', color: text, textAlign: 'center', outline: 'none', marginBottom: '16px', transition: 'border-color 0.2s' }} />
               <button onClick={handleSendCode} style={{ width: '100%', height: '48px', background: text, color: bg, fontWeight: '600', borderRadius: '24px', border: 'none', cursor: 'pointer', fontSize: '13px' }}>Continue</button>
             </div>
           ) : (
@@ -263,181 +247,175 @@ function KoppiApp() {
   return (
     <div style={{ backgroundColor: bg, color: text, minHeight: '100vh', display: 'flex', transition: 'background-color 0.4s ease', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', WebkitFontSmoothing: 'antialiased' }}>
       
-      {/* --- SIDEBAR RETRACTABLE PERSISTANTE --- */}
-      <aside style={{ width: sidebarCollapsed ? '80px' : '260px', borderRight: `1px solid ${border}`, display: 'flex', flexDirection: 'column', padding: '32px 16px', backgroundColor: cardBg, transition: 'width 0.3s cubic-bezier(0.25, 1, 0.5, 1)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: sidebarCollapsed ? 'center' : 'space-between', marginBottom: '40px', padding: '0 12px' }}>
-          {!sidebarCollapsed && <div style={{ fontSize: '18px', fontWeight: '600', letterSpacing: '3px' }}>KOPPI</div>}
-          <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)} style={{ background: 'none', border: 'none', fontSize: '16px', color: secondaryText, cursor: 'pointer', padding: '4px' }} title={sidebarCollapsed ? "Expand menu" : "Collapse menu"}>
-            {sidebarCollapsed ? "→" : "←"}
-          </button>
-        </div>
-        
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: 1 }}>
-          {[
-            { id: 0, label: "Overview", icon: Icons.Overview },
-            { id: 1, label: "Markets", icon: Icons.Markets },
-            { id: 2, label: "Vault", icon: Icons.Vault },
-            { id: 3, label: "Settings", icon: Icons.Settings }
-          ].map(t => {
-            const isSelected = vm.selectedTab === t.id && !selectedAssetDetail;
-            return (
-              <button key={t.id} onClick={() => { setSelectedAssetDetail(null); vm.setSelectedTab(t.id); }} style={{ display: 'flex', alignItems: 'center', justifyContent: sidebarCollapsed ? 'center' : 'flex-start', gap: '14px', width: '100%', height: '44px', padding: sidebarCollapsed ? '0' : '0 12px', borderRadius: '12px', border: 'none', background: isSelected ? (isDarkMode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)') : 'transparent', color: isSelected ? text : secondaryText, fontSize: '14px', fontWeight: isSelected ? '600' : '400', cursor: 'pointer', transition: 'all 0.2s' }} title={t.label}>
-                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: isSelected ? text : secondaryText }}><t.icon /></span> {!sidebarCollapsed && <span>{t.label}</span>}
+      {/* --- MENU SUPERIEUR HORIZONTAL SANS BARRE LATERALE --- */}
+      <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
+        <header style={{ height: '64px', borderBottom: `1px solid ${border}`, backgroundColor: cardBg, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 40px', position: 'sticky', top: 0, zIndex: 10 }}>
+          <div style={{ fontSize: '16px', fontWeight: '600', letterSpacing: '3px', color: text }}>KOPPI</div>
+          
+          <nav style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
+            {[
+              { id: 0, label: "Overview", icon: Icons.Overview },
+              { id: 1, label: "Markets", icon: Icons.Markets },
+              { id: 2, label: "Vault", icon: Icons.Vault },
+              { id: 3, label: "Settings", icon: Icons.Settings }
+            ].map(t => {
+              const isSelected = vm.selectedTab === t.id && !selectedAssetDetail;
+              return (
+                <button key={t.id} onClick={() => { setSelectedAssetDetail(null); vm.setSelectedTab(t.id); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'transparent', border: 'none', color: isSelected ? text : secondaryText, fontSize: '13px', fontWeight: isSelected ? '500' : '400', cursor: 'pointer', padding: '6px 12px', borderRadius: '8px', transition: 'color 0.15s' }}>
+                  <t.icon /> <span>{t.label}</span>
+                </button>
+              );
+            })}
+          </nav>
+
+          <div style={{ fontSize: '12px', color: secondaryText, fontFamily: 'monospace', background: bg, padding: '5px 12px', borderRadius: '14px', border: `1px solid ${border}` }}>
+            {user?.wallet?.address ? user.wallet.address.substring(0,6) + '...' + user.wallet.address.substring(user.wallet.address.length - 4) : "0x00...0000"}
+          </div>
+        </header>
+
+        {/* --- ZONE CENTRALE PRINCIPALE EN PLEINE LARGEUR --- */}
+        <main style={{ flex: 1, padding: '60px 40px', margin: '0 auto', width: '100%', maxWidth: '1120px' }}>
+          
+          {selectedAssetDetail ? (
+            <div style={{ maxWidth: '680px', margin: '0 auto' }}>
+              <button onClick={() => setSelectedAssetDetail(null)} style={{ background: 'none', border: 'none', color: secondaryText, fontSize: '13px', cursor: 'pointer', marginBottom: '32px', display: 'flex', alignItems: 'center' }}>
+                ✕ Close Detail
               </button>
-            );
-          })}
-        </nav>
-
-        <div style={{ textAlign: 'center', fontSize: '11px', color: '#10B981', fontWeight: '500' }}>
-          {sidebarCollapsed ? "●" : "● Operational"}
-        </div>
-      </aside>
-
-      {/* --- ESPACE CENTRAL DE L'INTERFACE PRINCIPALE --- */}
-      <main style={{ flex: 1, padding: '54px 64px', overflowY: 'auto', maxHeight: '100vh' }}>
-        
-        {/* SOUS-PAGE DE DÉTAIL D'UN ASSET (STYLE NATIF APPLE) */}
-        {selectedAssetDetail ? (
-          <div style={{ maxWidth: '680px', margin: '0 auto' }}>
-            <button onClick={() => setSelectedAssetDetail(null)} style={{ background: 'none', border: 'none', color: secondaryText, fontSize: '13px', cursor: 'pointer', marginBottom: '32px', display: 'flex', alignItems: 'center' }}>
-              ✕ Close Detail
-            </button>
-            
-            <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '20px', padding: '40px', textAlign: 'center', marginBottom: '32px' }}>
-              <h2 style={{ fontSize: '32px', fontWeight: '400', letterSpacing: '-1px', marginBottom: '6px' }}>{selectedAssetDetail.name}</h2>
-              <div style={{ fontSize: '14px', color: secondaryText, fontFamily: 'monospace', marginBottom: '32px' }}>{selectedAssetDetail.ticker} Assets</div>
               
-              <div style={{ fontSize: '42px', fontWeight: '300', letterSpacing: '-1.5px', marginBottom: '8px' }}>
-                {selectedAssetDetail.ticker === 'USDC' ? selectedAssetDetail.realBalance.toFixed(2) : selectedAssetDetail.realBalance} <span style={{ fontSize: '20px', color: secondaryText }}>{selectedAssetDetail.ticker}</span>
-              </div>
-              
-              <div style={{ fontSize: '14px', color: '#10B981', fontWeight: '500', marginBottom: '40px' }}>
-                ≈ {vm.currentCurrency.includes("EUR") ? (selectedAssetDetail.priceEUR * selectedAssetDetail.realBalance).toFixed(2) + '€' : (selectedAssetDetail.priceUSD * selectedAssetDetail.realBalance).toFixed(2) + '$'}
-              </div>
+              <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '20px', padding: '40px', textAlign: 'center', marginBottom: '32px' }}>
+                <h2 style={{ fontSize: '32px', fontWeight: '400', letterSpacing: '-1px', marginBottom: '6px' }}>{selectedAssetDetail.name}</h2>
+                <div style={{ fontSize: '14px', color: secondaryText, fontFamily: 'monospace', marginBottom: '32px' }}>{selectedAssetDetail.ticker} Assets</div>
+                
+                <div style={{ fontSize: '42px', fontWeight: '300', letterSpacing: '-1.5px', marginBottom: '8px' }}>
+                  {selectedAssetDetail.ticker === 'USDC' ? selectedAssetDetail.realBalance.toFixed(2) : selectedAssetDetail.realBalance} <span style={{ fontSize: '20px', color: secondaryText }}>{selectedAssetDetail.ticker}</span>
+                </div>
+                
+                <div style={{ fontSize: '14px', color: '#10B981', fontWeight: '500', marginBottom: '40px' }}>
+                  ≈ {vm.currentCurrency.includes("EUR") ? (selectedAssetDetail.priceEUR * selectedAssetDetail.realBalance).toFixed(2) + '€' : (selectedAssetDetail.priceUSD * selectedAssetDetail.realBalance).toFixed(2) + '$'}
+                </div>
 
-              <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
-                <button style={{ height: '40px', padding: '0 24px', background: text, color: bg, fontWeight: '500', borderRadius: '20px', border: 'none', cursor: 'pointer', fontSize: '13px' }}>Buy</button>
-                <button style={{ height: '40px', padding: '0 24px', background: 'transparent', color: text, fontWeight: '500', borderRadius: '20px', border: `1px solid ${border}`, cursor: 'pointer', fontSize: '13px' }}>Send</button>
+                <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+                  <button style={{ height: '40px', padding: '0 24px', background: text, color: bg, fontWeight: '500', borderRadius: '20px', border: 'none', cursor: 'pointer', fontSize: '13px' }}>Buy</button>
+                  <button style={{ height: '40px', padding: '0 24px', background: 'transparent', color: text, fontWeight: '500', borderRadius: '20px', border: `1px solid ${border}`, cursor: 'pointer', fontSize: '13px' }}>Send</button>
+                </div>
               </div>
             </div>
-          </div>
-        ) : (
-          <>
-            {/* TAB 0 : CONTENU DU PORTFOLIO AVEC DESIGN CENTRÉ IOS */}
-            {vm.selectedTab === 0 && (
-              <div style={{ maxWidth: '1040px', margin: '0 auto' }}>
-                
-                {/* 🌟 STRUCTURATION CENTRÉE DU SOLDE STYLE APP IOS */}
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 0 60px', textAlign: 'center' }}>
-                  <div style={{ fontSize: '52px', fontWeight: '300', letterSpacing: '-2px', fontFamily: '-apple-system, sans-serif', color: text, marginBottom: '20px' }}>
-                    {vm.totalBalanceCalculated.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{currencySymbol}
+          ) : (
+            <>
+              {/* TAB 0 : GENERAL PORTFOLIO AVEC INTERFACE ÉPURÉE ET ALIGNEMENT VERTICAL CENTRÉ */}
+              {vm.selectedTab === 0 && (
+                <div>
+                  {/* Cadre de solde principal entièrement centré */}
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px 0 60px', textAlign: 'center' }}>
+                    <div style={{ fontSize: '46px', fontWeight: '300', letterSpacing: '-1.5px', fontFamily: '-apple-system, sans-serif', color: text, marginBottom: '24px' }}>
+                      {vm.totalBalanceCalculated.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{currencySymbol}
+                    </div>
+                    
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                      <button style={{ height: '38px', padding: '0 22px', background: text, color: bg, fontWeight: '500', borderRadius: '19px', border: 'none', cursor: 'pointer', fontSize: '13px' }}>Add Money</button>
+                      <button style={{ height: '38px', padding: '0 22px', background: isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)', color: text, fontWeight: '500', borderRadius: '19px', border: 'none', cursor: 'pointer', fontSize: '13px' }}>Transfer</button>
+                    </div>
                   </div>
-                  
-                  {/* Boutons d'actions ancrés juste en dessous */}
-                  <div style={{ display: 'flex', gap: '10px' }}>
-                    <button style={{ height: '38px', padding: '0 22px', background: text, color: bg, fontWeight: '500', borderRadius: '19px', border: 'none', cursor: 'pointer', fontSize: '13px', transition: 'opacity 0.2s' }}>Add Money</button>
-                    <button style={{ height: '38px', padding: '0 22px', background: isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)', color: text, fontWeight: '500', borderRadius: '19px', border: 'none', cursor: 'pointer', fontSize: '13px', transition: 'background-color 0.2s' }}>Transfer</button>
-                  </div>
-                </div>
 
-                {/* Grille inférieure d'affichage des listes */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: '48px' }}>
-                  <div>
-                    <h3 style={{ fontSize: '14px', fontWeight: '500', color: secondaryText, marginBottom: '16px' }}>Assets</h3>
-                    <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '20px', overflow: 'hidden' }}>
-                      {acquiredAssets.length === 0 ? (
-                        <div style={{ padding: '32px', textAlign: 'center', color: secondaryText, fontSize: '13px' }}>
-                          No stablecoin balances found on this active node.
-                        </div>
-                      ) : (
-                        acquiredAssets.map((asset, i) => (
-                          <div key={asset.id} onClick={() => setSelectedAssetDetail(asset)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: i < acquiredAssets.length - 1 ? `1px solid ${border}` : 'none', cursor: 'pointer' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                              <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: asset.color }} />
-                              <div>
-                                <div style={{ fontWeight: '500', fontSize: '14px' }}>{asset.name}</div>
-                                <div style={{ fontSize: '12px', color: secondaryText }}>
-                                  {asset.ticker === 'USDC' ? asset.realBalance.toFixed(2) : asset.realBalance} {asset.ticker}
+                  {/* Grille d'affichage inférieure */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: '48px' }}>
+                    <div>
+                      <h3 style={{ fontSize: '14px', fontWeight: '500', color: secondaryText, marginBottom: '16px' }}>Assets</h3>
+                      <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '20px', overflow: 'hidden' }}>
+                        {acquiredAssets.length === 0 ? (
+                          <div style={{ padding: '32px', textAlign: 'center', color: secondaryText, fontSize: '13px' }}>
+                            No stablecoin balances found on this active node.
+                          </div>
+                        ) : (
+                          acquiredAssets.map((asset, i) => (
+                            <div key={asset.id} onClick={() => setSelectedAssetDetail(asset)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: i < acquiredAssets.length - 1 ? `1px solid ${border}` : 'none', cursor: 'pointer' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                                <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: asset.color }} />
+                                <div>
+                                  <div style={{ fontWeight: '500', fontSize: '14px' }}>{asset.name}</div>
+                                  <div style={{ fontSize: '12px', color: secondaryText }}>
+                                    {asset.ticker === 'USDC' ? asset.realBalance.toFixed(2) : asset.realBalance} {asset.ticker}
+                                  </div>
                                 </div>
                               </div>
+                              <div style={{ textAlign: 'right' }}>
+                                <div style={{ fontWeight: '500', fontSize: '14px' }}>{vm.currentCurrency.includes("EUR") ? (asset.priceEUR * asset.realBalance).toFixed(2) + '€' : (asset.priceUSD * asset.realBalance).toFixed(2) + '$'}</div>
+                                <div style={{ fontSize: '11px', color: asset.change24h >= 0 ? '#10B981' : '#EF4444' }}>{asset.change24h >= 0 ? '+' : ''}{asset.change24h.toFixed(2)}%</div>
+                              </div>
                             </div>
-                            <div style={{ textAlign: 'right' }}>
-                              <div style={{ fontWeight: '500', fontSize: '14px' }}>{vm.currentCurrency.includes("EUR") ? (asset.priceEUR * asset.realBalance).toFixed(2) + '€' : (asset.priceUSD * asset.realBalance).toFixed(2) + '$'}</div>
-                              <div style={{ fontSize: '11px', color: asset.change24h >= 0 ? '#10B981' : '#EF4444' }}>{asset.change24h >= 0 ? '+' : ''}{asset.change24h.toFixed(2)}%</div>
-                            </div>
-                          </div>
-                        ))
-                      )}
+                          ))
+                        )}
+                      </div>
                     </div>
-                  </div>
 
-                  <div>
-                    <h3 style={{ fontSize: '14px', fontWeight: '500', color: secondaryText, marginBottom: '16px' }}>Activity</h3>
-                    <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '20px', padding: '24px', textAlign: 'center' }}>
-                      <div style={{ fontSize: '13px', color: secondaryText }}>No transaction logs detected on Base Sepolia.</div>
+                    <div>
+                      <h3 style={{ fontSize: '14px', fontWeight: '500', color: secondaryText, marginBottom: '16px' }}>Activity</h3>
+                      <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '20px', padding: '24px', textAlign: 'center' }}>
+                        <div style={{ fontSize: '13px', color: secondaryText }}>No transaction logs detected on Base Sepolia.</div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* TAB 1 : MARCHES */}
-            {vm.selectedTab === 1 && (
-              <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-                <h2 style={{ fontSize: '22px', fontWeight: '500', marginBottom: '24px', letterSpacing: '-0.5px' }}>Markets</h2>
-                <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '14px', padding: '0 16px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <span style={{ color: secondaryText }}>🔍</span>
-                  <input type="text" placeholder="Search tokens..." style={{ width: '100%', height: '44px', border: 'none', background: 'transparent', outline: 'none', color: text, fontSize: '14px' }} />
+              {/* TAB 1 : MARCHES */}
+              {vm.selectedTab === 1 && (
+                <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+                  <h2 style={{ fontSize: '22px', fontWeight: '500', marginBottom: '24px', letterSpacing: '-0.5px' }}>Markets</h2>
+                  <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '14px', padding: '0 16px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <span style={{ color: secondaryText }}>🔍</span>
+                    <input type="text" placeholder="Search tokens..." style={{ width: '100%', height: '44px', border: 'none', background: 'transparent', outline: 'none', color: text, fontSize: '14px' }} />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {vm.assets.map(asset => (
+                      <div key={asset.id} onClick={() => setSelectedAssetDetail(asset)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 20px', background: cardBg, border: `1px solid ${border}`, borderRadius: '14px', cursor: 'pointer' }}>
+                        <div style={{ fontWeight: '500', fontSize: '14px' }}>{asset.ticker} <span style={{ fontWeight: '400', color: secondaryText, marginLeft: '6px', fontSize: '13px' }}>{asset.name}</span></div>
+                        <div style={{ fontWeight: '400', fontSize: '14px', fontFamily: 'monospace' }}>{asset.priceUSD.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  {vm.assets.map(asset => (
-                    <div key={asset.id} onClick={() => setSelectedAssetDetail(asset)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 20px', background: cardBg, border: `1px solid ${border}`, borderRadius: '14px', cursor: 'pointer' }}>
-                      <div style={{ fontWeight: '500', fontSize: '14px' }}>{asset.ticker} <span style={{ fontWeight: '400', color: secondaryText, marginLeft: '6px', fontSize: '13px' }}>{asset.name}</span></div>
-                      <div style={{ fontWeight: '400', fontSize: '14px', fontFamily: 'monospace' }}>{asset.priceUSD.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</div>
+              )}
+
+              {/* TAB 2 : VAULT */}
+              {vm.selectedTab === 2 && (
+                <div style={{ textAlign: 'center', padding: '100px 0', maxWidth: '400px', margin: '0 auto' }}>
+                  <h2 style={{ fontSize: '20px', fontWeight: '500', marginBottom: '8px' }}>Vault Security</h2>
+                  <p style={{ color: secondaryText, fontSize: '14px', lineHeight: '1.5' }}>Your asset lockers are operating under end-to-end multi-party encryption layers.</p>
+                </div>
+              )}
+
+              {/* TAB 3 : SETTINGS */}
+              {vm.selectedTab === 3 && (
+                <div style={{ maxWidth: '500px', margin: '0 auto' }}>
+                  <h2 style={{ fontSize: '22px', fontWeight: '500', marginBottom: '24px', letterSpacing: '-0.5px' }}>Settings</h2>
+                  <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '20px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                    <div>
+                      <label style={{ fontSize: '11px', color: secondaryText, fontWeight: '500', textTransform: 'uppercase', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>Interface Theme</label>
+                      <select value={vm.currentTheme} onChange={e => vm.setCurrentTheme(e.target.value)} style={{ width: '100%', height: '40px', background: bg, border: `1px solid ${border}`, borderRadius: '10px', padding: '0 10px', color: text, outline: 'none', fontSize: '13px' }}>
+                        <option value="Dark">Dark Mode</option>
+                        <option value="Light">Light Mode</option>
+                      </select>
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* TAB 2 : COFFRE FORT */}
-            {vm.selectedTab === 2 && (
-              <div style={{ textAlign: 'center', padding: '100px 0', maxWidth: '400px', margin: '0 auto' }}>
-                <h2 style={{ fontSize: '20px', fontWeight: '500', marginBottom: '8px' }}>Vault Security</h2>
-                <p style={{ color: secondaryText, fontSize: '14px', lineHeight: '1.5' }}>Your asset lockers are operating under end-to-end multi-party encryption layers.</p>
-              </div>
-            )}
-
-            {/* TAB 3 : RÉGLAGES */}
-            {vm.selectedTab === 3 && (
-              <div style={{ maxWidth: '500px', margin: '0 auto' }}>
-                <h2 style={{ fontSize: '22px', fontWeight: '500', marginBottom: '24px', letterSpacing: '-0.5px' }}>Settings</h2>
-                <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: '20px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                  <div>
-                    <label style={{ fontSize: '11px', color: secondaryText, fontWeight: '500', textTransform: 'uppercase', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>Interface Theme</label>
-                    <select value={vm.currentTheme} onChange={e => vm.setCurrentTheme(e.target.value)} style={{ width: '100%', height: '40px', background: bg, border: `1px solid ${border}`, borderRadius: '10px', padding: '0 10px', color: text, outline: 'none', fontSize: '13px' }}>
-                      <option value="Dark">Dark Mode</option>
-                      <option value="Light">Light Mode</option>
-                    </select>
+                    <div>
+                      <label style={{ fontSize: '11px', color: secondaryText, fontWeight: '500', textTransform: 'uppercase', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>Display Currency</label>
+                      <select value={vm.currentCurrency} onChange={e => vm.setCurrentCurrency(e.target.value)} style={{ width: '100%', height: '40px', background: bg, border: `1px solid ${border}`, borderRadius: '10px', padding: '0 10px', color: text, outline: 'none', fontSize: '13px' }}>
+                        <option value="USD ($)">USD ($)</option>
+                        <option value="EUR (€)">EUR (€)</option>
+                      </select>
+                    </div>
+                    <hr style={{ border: 'none', borderTop: `1px solid ${border}`, margin: '8px 0' }} />
+                    <button onClick={handleLogout} style={{ width: '100%', height: '44px', background: isDarkMode ? 'rgba(239, 68, 68, 0.12)' : '#FEE2E2', color: '#EF4444', fontWeight: '500', borderRadius: '22px', border: 'none', cursor: 'pointer', fontSize: '12px', transition: 'background-color 0.2s' }}>
+                      Disconnect Account
+                    </button>
                   </div>
-                  <div>
-                    <label style={{ fontSize: '11px', color: secondaryText, fontWeight: '500', textTransform: 'uppercase', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>Display Currency</label>
-                    <select value={vm.currentCurrency} onChange={e => vm.setCurrentCurrency(e.target.value)} style={{ width: '100%', height: '40px', background: bg, border: `1px solid ${border}`, borderRadius: '10px', padding: '0 10px', color: text, outline: 'none', fontSize: '13px' }}>
-                      <option value="USD ($)">USD ($)</option>
-                      <option value="EUR (€)">EUR (€)</option>
-                    </select>
-                  </div>
-                  <hr style={{ border: 'none', borderTop: `1px solid ${border}`, margin: '8px 0' }} />
-                  <button onClick={handleLogout} style={{ width: '100%', height: '44px', background: isDarkMode ? 'rgba(239, 68, 68, 0.12)' : '#FEE2E2', color: '#EF4444', fontWeight: '500', borderRadius: '22px', border: 'none', cursor: 'pointer', fontSize: '12px', transition: 'background-color 0.2s' }}>
-                    Disconnect Account
-                  </button>
                 </div>
-              </div>
-            )}
-          </>
-        )}
+              )}
+            </>
+          )}
 
-      </main>
+        </main>
+      </div>
     </div>
   );
 }
