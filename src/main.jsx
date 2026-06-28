@@ -29,7 +29,7 @@ const Icons = {
   Settings: () => (
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="3" />
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1-1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1-2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1-2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
     </svg>
   )
 };
@@ -178,9 +178,8 @@ function KoppiApp() {
   const border = isDarkMode ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.06)";
   const secondaryText = isDarkMode ? "#8E8E93" : "#86868B";
 
-  // Configuration couleur pour l'effet Liquid Glass d'après image_eb213e.png
-  const glassNavbarBg = isDarkMode ? "rgba(34, 39, 46, 0.75)" : "rgba(255, 255, 255, 0.75)";
-  const glassNavbarBorder = isDarkMode ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.08)";
+  const glassNavbarBg = isDarkMode ? "rgba(28, 30, 36, 0.70)" : "rgba(255, 255, 255, 0.75)";
+  const glassNavbarBorder = isDarkMode ? "rgba(255, 255, 255, 0.06)" : "rgba(0, 0, 0, 0.06)";
 
   useEffect(() => {
     document.body.style.backgroundColor = bg;
@@ -257,24 +256,24 @@ function KoppiApp() {
       
       <div style={{ width: '100%', display: 'flex', flexDirection: 'column', padding: '24px 0 0' }}>
         
-        {/* 🌟 CONTAINER DU LIQUID GLASS HEADER HORIZONTAL (FIDÈLE À image_eb213e.png) */}
+        {/* HEADER LIQUID GLASS ULTRA-SOBRE */}
         <div style={{ width: '100%', maxWidth: '1080px', margin: '0 auto', padding: '0 24px', position: 'sticky', top: '16px', zIndex: 100 }}>
           <header style={{ 
-            height: '56px', 
+            height: '54px', 
             border: `1px solid ${glassNavbarBorder}`, 
             backgroundColor: glassNavbarBg, 
-            backdropFilter: 'blur(24px)', 
-            WebkitBackdropFilter: 'blur(24px)',
-            borderRadius: '28px', 
+            backdropFilter: 'blur(30px)', 
+            WebkitBackdropFilter: 'blur(30px)',
+            borderRadius: '27px', 
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'space-between', 
-            padding: '0 24px',
-            boxShadow: isDarkMode ? '0 8px 32px 0 rgba(0, 0, 0, 0.37), inset 0 1px 1px 0 rgba(255, 255, 255, 0.05)' : '0 8px 32px 0 rgba(31, 38, 135, 0.05)'
+            padding: '0 20px',
+            boxShadow: isDarkMode ? '0 12px 40px 0 rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.03)' : '0 12px 40px 0 rgba(0, 0, 0, 0.03)'
           }}>
-            <div style={{ fontSize: '15px', fontWeight: '600', letterSpacing: '2px', color: text, paddingLeft: '8px' }}>KOPPI</div>
+            <div style={{ fontSize: '14px', fontWeight: '600', letterSpacing: '2px', color: text, paddingLeft: '8px' }}>KOPPI</div>
             
-            <nav style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+            <nav style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
               {[
                 { id: 0, label: "Overview", icon: Icons.Overview },
                 { id: 1, label: "Markets", icon: Icons.Markets },
@@ -294,13 +293,13 @@ function KoppiApp() {
                       fontSize: '13px', 
                       fontWeight: isSelected ? '500' : '400', 
                       cursor: 'pointer', 
-                      padding: '7px 18px', 
+                      padding: '8px 18px', 
                       borderRadius: '20px', 
-                      // 🌟 RENDU BUTTON FLUID GLASS AVEC HALO LUMINEUX BLEU NÉON ISSU DE TON CAPTURE D'ÉCRAN
-                      background: isSelected ? 'linear-gradient(135deg, #0d1527 0%, #052952 100%)' : 'transparent',
+                      // 🌟 CORRECTION DE LA SURBRILLANCE : Bleu premium, propre, avec lueur diffuse subtile sans bavure
+                      background: isSelected ? '#0A58CA' : 'transparent',
                       color: isSelected ? '#FFFFFF' : secondaryText, 
-                      boxShadow: isSelected ? '0 0 16px 2px rgba(13, 110, 253, 0.45), inset 0 1px 0 rgba(255,255,255,0.1)' : 'none',
-                      transition: 'all 0.2s ease-in-out'
+                      boxShadow: isSelected ? '0 4px 14px 0 rgba(10, 88, 202, 0.4), inset 0 1px 0 0 rgba(255, 255, 255, 0.2)' : 'none',
+                      transition: 'all 0.15s ease-in-out'
                     }}
                   >
                     <t.icon /> <span>{t.label}</span>
@@ -310,13 +309,12 @@ function KoppiApp() {
             </nav>
 
             <div style={{ 
-              fontSize: '12px', 
-              color: text, 
+              fontSize: '11px', 
+              color: secondaryText, 
               fontFamily: 'monospace', 
-              background: 'transparent', 
-              padding: '6px 16px', 
-              borderRadius: '16px', 
-              border: isDarkMode ? '1px solid rgba(255,255,255,0.15)' : '1px solid rgba(0,0,0,0.15)' 
+              padding: '5px 12px', 
+              borderRadius: '14px', 
+              border: `1px solid ${glassNavbarBorder}`
             }}>
               {user?.wallet?.address ? user.wallet.address.substring(0,6) + '...' + user.wallet.address.substring(user.wallet.address.length - 4) : "0x00...0000"}
             </div>
@@ -352,7 +350,7 @@ function KoppiApp() {
             </div>
           ) : (
             <>
-              {/* TAB 0 : GENERAL PORTFOLIO */}
+              {/* TAB 0 : PORTFOLIO */}
               {vm.selectedTab === 0 && (
                 <div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px 0 60px', textAlign: 'center' }}>
