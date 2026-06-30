@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { PrivyProvider } from '@privy-io/react-auth';
-import KoppiApp from './App'; // Assure-toi que ce fichier est bien dans le même dossier
+import KoppiApp from './app.jsx'; // Si le fichier est en minuscule
 
 const PRIVY_APP_ID = "cmqollwmd000s0cky0evrjnkd";
 
