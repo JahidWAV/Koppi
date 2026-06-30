@@ -5,7 +5,6 @@ export default async function handler(req, res) {
   const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
 
   try {
-    // On crée les paramètres un par un pour garantir l'encodage attendu
     const params = new URLSearchParams();
     params.append('wallet_addresses[base]', walletAddress);
     params.append('destination_networks[]', 'base');
@@ -21,11 +20,13 @@ export default async function handler(req, res) {
 
     const data = await response.json();
     
-    if (data.client_secret) {
-      return res.status(200).json({ clientSecret: data.client_secret });
-    } else {
-      return res.status(500).json({ error: data.error?.message || "Erreur Stripe" });
+    // LOG DÉTAILLÉ : On veut voir ce qui bloque dans les logs Vercel
+    if (!response.ok) {
+        console.error("Erreur Stripe brute:", JSON.stringify(data));
+        return res.status(response.status).json({ error: data.error.message });
     }
+
+    return res.status(200).json({ clientSecret: data.client_secret });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
