@@ -412,3 +412,4 @@ function KoppiApp() {
       `}</style>
     </div>
   );
+}
