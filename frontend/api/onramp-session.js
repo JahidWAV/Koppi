@@ -6,21 +6,19 @@ export default async function handler(req, res) {
   const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
 
   try {
-    // Configuration de la session Stripe
-    // On précise 'base' dans les réseaux autorisés et par défaut
-    const params = new URLSearchParams({
-      'allowed_destination_networks[]': 'base',
-      'transaction_details[destination_currency]': 'usdc',
-      'transaction_details[destination_network]': 'base'
-    });
-
+    // On crée simplement la session. 
+    // On ne passe plus wallet_addresses ici, car on utilisera 
+    // registerWalletAddress dans le frontend comme indiqué dans la doc.
     const response = await fetch('https://api.stripe.com/v1/crypto/onramp_sessions', {
       method: 'POST',
       headers: { 
         'Authorization': `Bearer ${STRIPE_SECRET_KEY}`, 
         'Content-Type': 'application/x-www-form-urlencoded' 
       },
-      body: params.toString()
+      body: new URLSearchParams({
+        'transaction_details[destination_currency]': 'usdc',
+        'transaction_details[destination_network]': 'base'
+      }).toString()
     });
 
     const data = await response.json();
