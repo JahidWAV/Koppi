@@ -1,16 +1,94 @@
 <!DOCTYPE html>
-<html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Koppi</title>
-    <style>
-      * { box-sizing: border-box; margin: 0; padding: 0; }
-      body { background-color: #F4F5F7; color: #020202; font-family: -apple-system, BlinkMacSystemFont, sans-serif; min-height: 100vh; }
-    </style>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Koppi</title>
+<style>
+  body {
+    background-color: #000000;
+    color: #F5F5F7;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .content { text-align: center; padding: 20px; }
+
+  .tag {
+    color: #0A58CA;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    animation: fadeUp 1s ease-out;
+  }
+
+  h1 {
+    font-size: 80px;
+    font-weight: 200;
+    letter-spacing: -3px;
+    margin-bottom: 30px;
+    animation: fadeUp 1s 0.2s ease-out both;
+  }
+
+  h1 span { color: #0A58CA; }
+
+  p {
+    font-size: 18px;
+    color: #8E8E93;
+    max-width: 500px;
+    margin: 0 auto 40px;
+    line-height: 1.6;
+    animation: fadeUp 1s 0.4s ease-out both;
+  }
+
+  .btn {
+    padding: 16px 40px;
+    font-size: 16px;
+    background: transparent;
+    color: #F5F5F7;
+    border: 1px solid #333;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    animation: fadeUp 1s 0.6s ease-out both;
+  }
+
+  .btn:hover {
+    background: #0A58CA;
+    border-color: #0A58CA;
+  }
+
+  footer {
+    position: absolute;
+    bottom: 30px;
+    font-size: 12px;
+    color: #333;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<div class="content">
+  <div class="tag">Next-Gen Web3 Infrastructure</div>
+  <h1>Your money, <br/><span>fully yours.</span></h1>
+  <p>Experience the future of digital assets. Secure, non-custodial, and built for the Base network.</p>
+  <button class="btn" onclick="window.open('https://dashboard.koppi.app','_blank')">Launch Web App</button>
+</div>
+
+<footer>© 2026 Koppi. All rights reserved.</footer>
+
+</body>
 </html>
