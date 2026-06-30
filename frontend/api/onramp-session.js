@@ -1,4 +1,3 @@
-// frontend/api/onramp-session.js
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
@@ -24,12 +23,14 @@ export default async function handler(req, res) {
 
     const data = await response.json();
     
-    if (data.client_secret) {
-      res.status(200).json({ clientSecret: data.client_secret });
-    } else {
-      res.status(500).json({ error: data.error || "Erreur lors de la création de la session" });
+    // DEBUG : On renvoie l'erreur Stripe dans la réponse pour comprendre ce qui bloque
+    if (!data.client_secret) {
+      console.error("Erreur Stripe:", data); // Visible dans les Logs Vercel
+      return res.status(500).json({ error: data.error?.message || "Stripe n'a pas renvoyé de clientSecret" });
     }
+
+    res.status(200).json({ clientSecret: data.client_secret });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to contact Stripe API' });
+    res.status(500).json({ error: error.message });
   }
 }
