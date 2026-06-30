@@ -192,20 +192,27 @@ function KoppiApp() {
     try { await logout(); localStorage.clear(); setStep('email'); setEmail(''); setCode(''); window.location.reload(); } catch(e) {}
   };
 
-  const handleAddMoney = async () => {
+const handleAddMoney = async () => {
+    console.log("Tentative d'appel API...");
     try {
       const response = await fetch('/api/onramp-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ walletAddress: user?.wallet?.address })
       });
-      const { clientSecret } = await response.json();
-      
+
+      // On vérifie si la réponse est bien du JSON avant de parser
+      const text = await response.text(); 
+      console.log("Réponse brute du serveur:", text);
+
+      const data = JSON.parse(text);
+      if (!data.clientSecret) throw new Error("Pas de clientSecret reçu");
+
       const onramp = await stripeOnrampPromise;
-      const session = onramp.createSession({ clientSecret });
+      const session = onramp.createSession({ clientSecret: data.clientSecret });
       session.mount("#onramp-element");
     } catch (e) {
-      console.error("Erreur Onramp:", e);
+      console.error("Détail de l'erreur:", e);
     }
   };
 
