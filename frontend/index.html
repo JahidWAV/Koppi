@@ -1,20 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Koppi</title>
+  <!-- Tes styles CSS actuels restent ici -->
+</head>
 <body>
-  <div class="content" id="landing-content">
-    <div class="tag">Next-Gen Web3 Infrastructure</div>
-    <h1>Your money, <br/><span>fully yours.</span></h1>
-    <p>Experience the future of digital assets...</p>
-    
-    <!-- Ce bouton va cacher la vitrine et lancer l'App -->
-    <button class="btn" onclick="launchApp()">Launch Web App</button>
+  <!-- Ta vitrine actuelle -->
+  <div class="content" id="landing-page">
+    <h1>Your money, <span>fully yours.</span></h1>
+    <p>Experience the future of digital assets.</p>
+    <!-- Le bouton cache la vitrine et monte l'app -->
+    <button class="btn" onclick="document.getElementById('landing-page').style.display='none'; document.getElementById('root').style.display='block';">
+      Launch Web App
+    </button>
   </div>
 
-  <div id="root"></div> <!-- Ici React va s'afficher -->
+  <!-- Le conteneur React (caché par défaut) -->
+  <div id="root" style="display: none;"></div>
 
-  <script>
-    function launchApp() {
-      document.getElementById('landing-content').style.display = 'none';
-      // Le script React sera chargé par Vite/main.jsx
-    }
-  </script>
+  <!-- Vite chargera ton app ici -->
   <script type="module" src="/src/main.jsx"></script>
 </body>
+</html>
