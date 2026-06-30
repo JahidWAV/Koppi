@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { loadStripeOnramp } from '@stripe/crypto';
 
-const STRIPE_PUBLISHABLE_KEY = "pk_test_VOTRE_CLE"; // ⚠️ À Remplacer
+const STRIPE_PUBLISHABLE_KEY = "pk_test_51TjK2CPzeMv2JZlDBr7IheLGpdBWG5lu594IbGvm2V71GVosnWAGlQeiQDJVhla4UFSAaF6rMLZq1Maw282qFjxi00wo6t8443"; // ⚠️ À Remplacer
 const BACKEND_URL = ""; 
 
 export default function OnrampModal({ isOpen, onClose, walletAddress, isDarkMode }) {
