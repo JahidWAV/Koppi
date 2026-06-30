@@ -412,12 +412,3 @@ function KoppiApp() {
       `}</style>
     </div>
   );
-}
-
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <PrivyProvider appId={PRIVY_APP_ID} config={{ loginMethods: ['email'], embeddedWallets: { createOnLogin: 'users-without-wallets' } }}>
-      <KoppiApp />
-    </PrivyProvider>
-  </React.StrictMode>
-);
