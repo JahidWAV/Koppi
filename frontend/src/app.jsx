@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import ReactDOM from 'react-dom/client';
 import { PrivyProvider, usePrivy, useLoginWithEmail } from '@privy-io/react-auth';
+import { loadStripeOnramp } from "@stripe/crypto";
+
+// Initialise le SDK avec ta clé publique (remplace par ta vraie PK_TEST)
+const stripeOnrampPromise = loadStripeOnramp("pk_test_51TjK2CPzeMv2JZlDBr7IheLGpdBWG5lu594IbGvm2V71GVosnWAGlQeiQDJVhla4UFSAaF6rMLZq1Maw282qFjxi00wo6t8443");
 
 if (typeof document !== 'undefined') {
   const injectStaticStyle = () => {
@@ -188,6 +192,23 @@ function KoppiApp() {
     try { await logout(); localStorage.clear(); setStep('email'); setEmail(''); setCode(''); window.location.reload(); } catch(e) {}
   };
 
+  const handleAddMoney = async () => {
+    try {
+      const response = await fetch('/api/onramp-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ walletAddress: user?.wallet?.address })
+      });
+      const { clientSecret } = await response.json();
+      
+      const onramp = await stripeOnrampPromise;
+      const session = onramp.createSession({ clientSecret });
+      session.mount("#onramp-element");
+    } catch (e) {
+      console.error("Erreur Onramp:", e);
+    }
+  };
+
   // --- LOADING ---
   if (!ready) {
     return (
@@ -312,7 +333,15 @@ function KoppiApp() {
                       {vm.totalBalanceCalculated.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{currencySymbol}
                     </div>
                     <div style={{ display: 'flex', gap: '10px' }}>
-                      <button style={{ height: '38px', padding: '0 22px', background: text, color: bg, fontWeight: '500', borderRadius: '19px', border: 'none', cursor: 'pointer', fontSize: '13px' }}>Add Money</button>
+                      <button 
+  onClick={handleAddMoney} 
+  style={{ height: '38px', padding: '0 22px', background: text, color: bg, fontWeight: '500', borderRadius: '19px', border: 'none', cursor: 'pointer', fontSize: '13px' }}
+>
+  Add Money
+</button>
+
+{/* Ajoute ce conteneur pour afficher l'interface Stripe */}
+<div id="onramp-element" style={{ marginTop: '20px', width: '100%', maxWidth: '400px', margin: '20px auto 0' }}></div>
                       <button style={{ height: '38px', padding: '0 22px', background: isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)', color: text, fontWeight: '500', borderRadius: '19px', border: 'none', cursor: 'pointer', fontSize: '13px' }}>Transfer</button>
                     </div>
                   </div>
