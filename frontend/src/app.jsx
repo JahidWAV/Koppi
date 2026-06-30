@@ -413,3 +413,5 @@ function KoppiApp() {
     </div>
   );
 }
+
+export default KoppiApp;
