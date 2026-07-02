@@ -1,11 +1,16 @@
 import { SignJWT, importPKCS8 } from 'jose';
 
 const CDP_API_KEY_ID = process.env.CDP_API_KEY_ID;
-const CDP_API_KEY_SECRET = process.env.CDP_API_KEY_SECRET.replace(/\\n/g, '\n');
+const RAW_SECRET = process.env.CDP_API_KEY_SECRET || '';
+const CDP_API_KEY_SECRET = RAW_SECRET.replace(/\\n/g, '\n').trim();
 const REQUEST_HOST = 'api.developer.coinbase.com';
 const REQUEST_PATH = '/onramp/v1/token';
 
 async function generateJWT() {
+  console.log('Longueur clé:', CDP_API_KEY_SECRET.length);
+  console.log('Début clé:', JSON.stringify(CDP_API_KEY_SECRET.substring(0, 40)));
+  console.log('Fin clé:', JSON.stringify(CDP_API_KEY_SECRET.substring(CDP_API_KEY_SECRET.length - 40)));
+
   const key = await importPKCS8(CDP_API_KEY_SECRET, 'ES256');
   const uri = `POST ${REQUEST_HOST}${REQUEST_PATH}`;
 
