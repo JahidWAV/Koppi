@@ -1,28 +1,12 @@
-import { SignJWT } from 'jose';
-import crypto from 'crypto';
+import { SignJWT, importPKCS8 } from 'jose';
 
 const CDP_API_KEY_ID = process.env.CDP_API_KEY_ID;
-const CDP_API_KEY_SECRET = process.env.CDP_API_KEY_SECRET; // base64 brut, ex: "Ml3vT9pT..."
+const CDP_API_KEY_SECRET = process.env.CDP_API_KEY_SECRET.replace(/\\n/g, '\n');
 const REQUEST_HOST = 'api.developer.coinbase.com';
 const REQUEST_PATH = '/onramp/v1/token';
 
-function buildEd25519KeyObject(base64Secret) {
-  const keyBuffer = Buffer.from(base64Secret, 'base64');
-  // Les clés CDP Ed25519 exportées contiennent souvent seed+public (64 bytes) ; on garde les 32 premiers (seed)
-  const seed = keyBuffer.length === 64 ? keyBuffer.subarray(0, 32) : keyBuffer;
-
-  const derPrefix = Buffer.from('302e020100300506032b657004220420', 'hex');
-  const der = Buffer.concat([derPrefix, seed]);
-
-  return crypto.createPrivateKey({
-    key: der,
-    format: 'der',
-    type: 'pkcs8'
-  });
-}
-
 async function generateJWT() {
-  const keyObject = buildEd25519KeyObject(CDP_API_KEY_SECRET);
+  const key = await importPKCS8(CDP_API_KEY_SECRET, 'ES256');
   const uri = `POST ${REQUEST_HOST}${REQUEST_PATH}`;
 
   const jwt = await new SignJWT({
@@ -31,11 +15,10 @@ async function generateJWT() {
     aud: [REQUEST_HOST],
     uris: [uri]
   })
-    .setProtectedHeader({ alg: 'EdDSA', kid: CDP_API_KEY_ID, typ: 'JWT' })
+    .setProtectedHeader({ alg: 'ES256', kid: CDP_API_KEY_ID, typ: 'JWT' })
     .setIssuedAt()
     .setExpirationTime('2m')
-    .setNotBefore(new Date())
-    .sign(keyObject);
+    .sign(key);
 
   return jwt;
 }
