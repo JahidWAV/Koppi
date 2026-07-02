@@ -1,7 +1,7 @@
 import { SignJWT, importPKCS8 } from 'jose';
 
 const CDP_API_KEY_ID = process.env.CDP_API_KEY_ID;
-const CDP_API_KEY_SECRET = process.env.CDP_API_KEY_SECRET; // clé PEM complète, avec \n
+const CDP_API_KEY_SECRET = process.env.CDP_API_KEY_SECRET.replace(/\\n/g, '\n');
 const REQUEST_HOST = 'api.developer.coinbase.com';
 const REQUEST_PATH = '/onramp/v1/token';
 
