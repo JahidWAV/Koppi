@@ -1,0 +1,44 @@
+const ALLOWED_SCHEMES = ["koppi"];
+
+function isValidReturnUrl(returnUrl) {
+  try {
+    const url = new URL(returnUrl);
+    const scheme = url.protocol.replace(":", "");
+    return ALLOWED_SCHEMES.includes(scheme);
+  } catch {
+    return false;
+  }
+}
+
+export default async function handler(req, res) {
+  if (req.method === "GET") {
+    const { returnUrl } = req.query;
+
+    if (!returnUrl || !isValidReturnUrl(String(returnUrl))) {
+      return res.status(400).json({ error: "invalid_return_url" });
+    }
+
+    return res.status(200).json({
+      ok: true,
+      returnUrl,
+      bridgeUrl: `/coinbase.html?returnUrl=${encodeURIComponent(returnUrl)}`
+    });
+  }
+
+  if (req.method === "POST") {
+    const { address, provider } = req.body || {};
+
+    if (!address || typeof address !== "string") {
+      return res.status(400).json({ error: "invalid_address" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      address,
+      provider: provider || "coinbase"
+    });
+  }
+
+  res.setHeader("Allow", ["GET", "POST"]);
+  return res.status(405).json({ error: "method_not_allowed" });
+}
