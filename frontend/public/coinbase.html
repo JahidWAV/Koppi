@@ -1,0 +1,112 @@
+<!-- frontend/public/coinbase.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connect Coinbase Wallet</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #000;
+      color: #F1E194;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card { width: 100%; max-width: 420px; text-align: center; }
+    h1 { font-size: 20px; margin-bottom: 10px; }
+    p { font-size: 14px; color: rgba(241,225,148,0.6); line-height: 1.5; margin-bottom: 24px; }
+    button {
+      width: 100%;
+      height: 52px;
+      border: 0;
+      border-radius: 14px;
+      background: #F1E194;
+      color: #000;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+    }
+    button:disabled { opacity: 0.6; }
+    .status {
+      margin-top: 16px;
+      min-height: 20px;
+      font-size: 13px;
+      color: rgba(241,225,148,0.65);
+    }
+    .error { color: #EF4444; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Connect Coinbase Wallet</h1>
+    <p>Link your external Base wallet to Koppi.</p>
+    <button id="connectBtn">Connect Wallet</button>
+    <div id="status" class="status"></div>
+  </div>
+
+  <script type="module">
+    import { CoinbaseWalletSDK } from "https://esm.sh/@coinbase/wallet-sdk@4?bundle";
+
+    const params = new URLSearchParams(window.location.search);
+    const returnUrl = params.get("returnUrl");
+    const btn = document.getElementById("connectBtn");
+    const statusEl = document.getElementById("status");
+
+    if (!returnUrl) {
+      btn.disabled = true;
+      statusEl.textContent = "Missing return URL.";
+      statusEl.classList.add("error");
+    }
+
+    const sdk = new CoinbaseWalletSDK({
+      appName: "Koppi",
+      appLogoUrl: "https://koppi.app/logo.png"
+    });
+
+    const provider = sdk.makeWeb3Provider();
+
+    btn.addEventListener("click", async () => {
+      btn.disabled = true;
+      statusEl.classList.remove("error");
+      statusEl.textContent = "Opening Coinbase Wallet…";
+
+      try {
+        const accounts = await provider.request({ method: "eth_requestAccounts" });
+        const address = accounts?.[0];
+
+        if (!address) {
+          throw new Error("No wallet address returned");
+        }
+
+        fetch("/api/coinbase-bridge", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ address, provider: "coinbase" })
+        }).catch(() => {});
+
+        statusEl.textContent = "Connected. Redirecting…";
+
+        const redirectUrl =
+          `${returnUrl}?address=${encodeURIComponent(address)}&provider=coinbase`;
+
+        window.location.href = redirectUrl;
+      } catch (error) {
+        const message = error?.message || "connection_failed";
+        statusEl.textContent = message;
+        statusEl.classList.add("error");
+        btn.disabled = false;
+
+        setTimeout(() => {
+          window.location.href =
+            `${returnUrl}?error=${encodeURIComponent(message)}&provider=coinbase`;
+        }, 1500);
+      }
+    });
+  </script>
+</body>
+</html>
